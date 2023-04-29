@@ -69,10 +69,11 @@ class CANHandler(Module):
 
         try:
             self.bus.send(msg, timeout=0.01)
+            print(f"sent can frame: {msg}")
         #TODO: Handle different types of errors
         except Exception as e:
             print("Message not sent:", [e, msg])
-        finally:  
+        finally:
             self.lock.release()
 
     def run(self):
