@@ -26,7 +26,7 @@ class EthernetClient(Module):
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
 
-    
+    # receive
     def run(self):
         try:
             data_receive = self.socket.recv(1024)
