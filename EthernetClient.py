@@ -20,8 +20,22 @@ class EthernetClient(Module):
         pub.subscribe(self.message_listener, "ethernet.send")
     
     def message_listener(self, message):
+
+        if message["type"] == "CAN":
+
+            type = data[0].encode()
+            data = [message["address"]] + message["data"]
+
+            format_string = f"{len(type)}s{len(data)}B"
+
+            data_bytes = struct.pack(format_string, *data)
+
+        
+        else: # LID, SON, IMU
+            pass
+
         try:
-            self.socket.sendall(message["data"])
+            self.socket.sendall(data_bytes)
         except socket.error:
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
@@ -32,10 +46,14 @@ class EthernetClient(Module):
             data_receive = self.socket.recv(1024)
 
             if data_receive:
-                data = struct.unpack("{}B".format(len(data_receive)), data_receive)
-                print(data)
-                address, data = data[0], data[1:]
-                pub.sendMessage("can.send", message = {"address": address, "data": [data]})
+                data = struct.unpack(f"3s{len(data_receive) - 3}B", data_receive)
+
+                if data[0].decode() == "CAN": # CAN
+                    address, data = data[1], data[2:]
+                    pub.sendMessage("can.send", message = {"address": address, "data": data})
+                else: # LID, SON, IMU
+                    type, data = data[0].decode(), data[1:]
+                    pub.sendMessage(f"{type}.send", message = {"data": data})
 
         except socket.error:
             self.socket.close()

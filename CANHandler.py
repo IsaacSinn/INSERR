@@ -68,7 +68,6 @@ class CANHandler(Module):
         self.lock.acquire()
 
         try:
-            # print(f"sent can frame: {msg}")
             self.bus.send(msg, timeout=0.01)
         except Exception as e:
             print("Message not sent:", [e, msg])
@@ -80,9 +79,11 @@ class CANHandler(Module):
         msg = self.bus.recv(0)
 
         if msg is not None:
-            topic = f"can.receive.{hex(msg.arbitration_id)}"
-            #TODO: write different topic names
-            pub.sendMessage(topic, message = {"address": msg.arbitration_id, "data": msg.data})
+
+            data = msg.data
+            data_array = [int.from_bytes(byte, byteorder='big') for byte in data]
+
+            pub.sendMessage("ethernet.send", message = {"type": "CAN", "address": hex(msg.arbitration_id), "data": data})
 
 if __name__ == "__main__":
     CANHandler = CANHandler(250000)

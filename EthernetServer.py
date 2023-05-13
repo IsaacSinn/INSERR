@@ -31,14 +31,24 @@ class EthernetHandler(Module):
     def message_listener(self, message):
         
         # constructing data_byte struct
-        data = [message["address"]] + message["data"]
-        data_bytes = struct.pack("{}B".format(len(data)), *data)
+        # if message is CAN, "address", "data"
+        if message["type"] == "CAN":
+
+            type = data[0].encode()
+            data = [message["address"]] + message["data"]
+
+            format_string = f"{len(type)}s{len(data)}B"
+
+            data_bytes = struct.pack(format_string, *data)
+        
+        # else type is LID, SON, IMU
+        else:
+            data_bytes = b'\x01'
 
         # send
         if self.connected:
             try:
                 self.conn.sendall(data_bytes)
-                print(f"send: {data_bytes}")
             except socket.error:
                 print(f"Disconnect from {self.addr}")
                 self.conn = None
@@ -51,7 +61,16 @@ class EthernetHandler(Module):
             try:
                 data_receive = self.conn.recv(1024)
                 if data_receive:
-                    print(f"receive: {data_receive}")
+                    data = struct.unpack(f"3s{len(data_receive) - 3}B", data_receive)
+
+                    if data[0].decode() == "CAN": # CAN
+                        address, data = data[1], data[2:]
+                        print(address, data)
+                        pub.sendMessage("can.receive", message = {"address": address, "data": data})
+                    else: # LID, SON, IMU
+                        type, data = data[0].decode(), data[1:]
+                        pub.sendMessage(f"{type}.receive", message = {"data": data})
+
             except socket.error:
                 print(f"Disconnect from {self.addr}")
                 self.conn = None
@@ -83,7 +102,7 @@ class TestEthernetHandler(Module):
         super().__init__()
 
     def run(self):
-        pub.sendMessage("ethernet.send", message = {"address": 0xFF, "data": [0xAA]})
+        pub.sendMessage("ethernet.send", message = {"type": "CAN" ,"address": 0xFF, "data": [0xAA]})
 
 if __name__ == "__main__":
     EthernetClientHandler = EthernetClientHandler()
