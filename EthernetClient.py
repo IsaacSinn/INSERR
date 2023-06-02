@@ -9,7 +9,7 @@ class EthernetClient(Module):
     def __init__(self):
         super().__init__()
 
-        self.HOST = "10.239.246.80"  # The server's hostname or IP address
+        self.HOST = "169.254.196.165"  # The server's hostname or IP address
         self.PORT = 50000  # The port used by the server
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,12 +23,21 @@ class EthernetClient(Module):
 
         if message["type"] == "CAN":
 
-            type = data[0].encode()
-            data = [message["address"]] + message["data"]
+            message_type = "CAN".encode()
+            address1 = message["address"] >> 8 & 0xff
+            address2 = message["address"] & 0xff
+            if message["data"] == []:
+                
+                data = [address1] + [address2] + [0]
+            else:
+                data = [address1] + [address2] + message["data"]
 
-            format_string = f"{len(type)}s{len(data)}B"
+            format_string = f"{len(message_type)}s{len(data)}B"
+            print(message)
+            print(data)
 
-            data_bytes = struct.pack(format_string, *data)
+            data_bytes = struct.pack(format_string, message_type, *data)
+            print(data_bytes)
 
         
         else: # LID, SON, IMU
