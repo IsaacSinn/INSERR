@@ -34,12 +34,12 @@ class EthernetHandler(Module):
         # if message is CAN, "address", "data"
         if message["type"] == "CAN":
 
-            type = data[0].encode()
+            type = "CAN".encode()
             data = [message["address"]] + message["data"]
 
             format_string = f"{len(type)}s{len(data)}B"
 
-            data_bytes = struct.pack(format_string, *data)
+            data_bytes = struct.pack(format_string, type, *data)
         
         # else type is LID, SON, IMU
         else:
@@ -64,12 +64,12 @@ class EthernetHandler(Module):
                     data = struct.unpack(f"3s{len(data_receive) - 3}B", data_receive)
 
                     if data[0].decode() == "CAN": # CAN
-                        address, data = data[1], data[2:]
+                        address, data = data[1:3], data[3:]
                         print(address, data)
                         pub.sendMessage("can.receive", message = {"address": address, "data": data})
                     else: # LID, SON, IMU
-                        type, data = data[0].decode(), data[1:]
-                        pub.sendMessage(f"{type}.receive", message = {"data": data})
+                        type, data_send = data[0].decode(), data[1:]
+                        pub.sendMessage(f"{type}.receive", message = {"data": data_send})
 
             except socket.error:
                 print(f"Disconnect from {self.addr}")
