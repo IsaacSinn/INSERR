@@ -12,7 +12,7 @@ client_socket.connect(('169.254.196.165', 8000))
 # Make a file-like object out of the connection
 connection = client_socket.makefile('wb')
 try:
-    camera = picamera2.PiCamera()
+    camera = picamera2.Picamera2()
 
     video_config = camera.create_video_configuration({"size": (1280, 720)})
     camera.configure(video_config)
