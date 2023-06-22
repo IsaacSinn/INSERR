@@ -33,11 +33,11 @@ class EthernetClient(Module):
                 data = [address1] + [address2] + message["data"]
 
             format_string = f"{len(message_type)}s{len(data)}B"
-            print(message)
-            print(data)
+            # print(message)
+            # print(data)
 
             data_bytes = struct.pack(format_string, message_type, *data)
-            print(data_bytes)
+            # print(data_bytes)
 
         
         else: # LID, SON, IMU
