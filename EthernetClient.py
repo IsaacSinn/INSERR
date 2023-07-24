@@ -60,7 +60,8 @@ class EthernetClient(Module):
 
             if data_frame:
                 print(data_frame)
-                data = struct.unpack(f"3s{frame_length - 3}B", data_receive)
+                data = struct.unpack(f"3s{frame_length - 3}B", data_frame)
+
                 print(data)
                 
                 if data[0].decode() == "CAN": # CAN

@@ -37,9 +37,9 @@ class EthernetHandler(Module):
             START = "X".encode()
             type = "CAN".encode()
 
-            format_string = f"1s1B3s{len(data)}B"
-
             data = [message["address"]] + message["data"]
+
+            format_string = f"1s1B3s{len(data)}B"
 
             data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
             print(data, data_bytes)
