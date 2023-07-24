@@ -33,11 +33,8 @@ class EthernetClient(Module):
                 data = [address1] + [address2] + message["data"]
 
             format_string = f"{len(message_type)}s{len(data)}B"
-            # print(message)
-            # print(data)
 
             data_bytes = struct.pack(format_string, message_type, *data)
-            # print(data_bytes)
 
         
         else: # LID, SON, IMU
@@ -52,11 +49,20 @@ class EthernetClient(Module):
     # receive
     def run(self):
         try:
-            data_receive = self.socket.recv(1024)
+            data_receive = self.socket.recv(2) # get 2 bytes first, X start of frame, 1 integer length of frame
 
             if data_receive:
-                data = struct.unpack(f"3s{len(data_receive) - 3}B", data_receive)
+                data = struct.unpack(f"1s1B", data_receive)
+                print(data)
+                frame_length = data[1]
+            
+            data_frame = self.socket.recv(frame_length)
 
+            if data_frame:
+                print(data_frame)
+                data = struct.unpack(f"3s{frame_length - 3}B", data_receive)
+                print(data)
+                
                 if data[0].decode() == "CAN": # CAN
                     address, data = data[1], data[2:]
                     pub.sendMessage("can.send", message = {"address": address, "data": data})

@@ -13,6 +13,7 @@ from ThrusterPower import ThrusterPower
 from Thrusters import Thrusters
 from CANHandler import CANHandler
 from Logger import Logger
+from EthernetServer import EthernetClientHandler
 
 mm = ModuleManager()
 pygs = PyGameServices()
@@ -28,8 +29,9 @@ ControlProfileC = ControlProfile(50, 50, "C")
 ControlProfileD = ControlProfile(30, 50, "D")
 ThrusterPower = ThrusterPower()
 Thrusters = Thrusters()
+EthernetClientHandler = EthernetClientHandler()
 # CANHandler = CANHandler(115200) # BAUDRATE
-# Logger = Logger(False, False, None, "log.sent.0x23") # FILE, PRINT, RATE_LIMITER, TOPICS
+Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
 
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
@@ -40,12 +42,16 @@ mm.register(
             (ControlProfileC, 1),
             (ControlProfileD, 1),
             (ThrusterPower, 60),
-            (Thrusters, 15),
+            (Thrusters, 1),
+            (EthernetClientHandler, 1)
             # (CANHandler, 1),
 )
 
 mm.start_all()
 
-while True:
-    pygs.get_pygame().event.get()
-    pygs.get_pygame().time.delay((2)) # ms
+try:
+    while True:
+        pygs.get_pygame().event.get()
+        pygs.get_pygame().time.delay((2)) # ms
+except KeyboardInterrupt:
+    mm.stop_all()

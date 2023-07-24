@@ -34,12 +34,15 @@ class EthernetHandler(Module):
         # if message is CAN, "address", "data"
         if message["type"] == "CAN":
 
+            START = "X".encode()
             type = "CAN".encode()
+
+            format_string = f"1s1B3s{len(data)}B"
+
             data = [message["address"]] + message["data"]
 
-            format_string = f"{len(type)}s{len(data)}B"
-
-            data_bytes = struct.pack(format_string, type, *data)
+            data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
+            print(data, data_bytes)
         
         # else type is LID, SON, IMU
         else:
@@ -65,7 +68,7 @@ class EthernetHandler(Module):
 
                     if data[0].decode() == "CAN": # CAN
                         address, data = data[1:3], data[3:]
-                        print(address, data)
+                        #print(address, data)
                         pub.sendMessage("can.receive", message = {"address": address, "data": data})
                     else: # LID, SON, IMU
                         type, data_send = data[0].decode(), data[1:]
@@ -102,7 +105,7 @@ class TestEthernetHandler(Module):
         super().__init__()
 
     def run(self):
-        pub.sendMessage("ethernet.send", message = {"type": "CAN" ,"address": 0xFF, "data": [0xAA]})
+        pub.sendMessage("ethernet.send", message = {"type": "CAN" ,"address": 0x10, "data": [0x20, 0x10, 0x00]})
 
 if __name__ == "__main__":
     EthernetClientHandler = EthernetClientHandler()
