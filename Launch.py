@@ -42,7 +42,7 @@ mm.register(
             (ControlProfileC, 1),
             (ControlProfileD, 1),
             (ThrusterPower, 60),
-            (Thrusters, 1),
+            (Thrusters, 3),
             (EthernetClientHandler, 1)
             # (CANHandler, 1),
 )

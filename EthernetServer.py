@@ -42,11 +42,11 @@ class EthernetHandler(Module):
             format_string = f"1s1B3s{len(data)}B"
 
             data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
-            print(data, data_bytes)
+            #print(data, data_bytes)
         
         # else type is LID, SON, IMU
         else:
-            data_bytes = b'\x01'
+            pass
 
         # send
         if self.connected:
@@ -62,9 +62,16 @@ class EthernetHandler(Module):
         # receive
         if self.connected:
             try:
-                data_receive = self.conn.recv(1024)
+                data_receive = self.conn.recv(2)
+
                 if data_receive:
-                    data = struct.unpack(f"3s{len(data_receive) - 3}B", data_receive)
+                    data = struct.unpack(f"1s1B", data_receive)
+                    frame_length = data[1]
+                
+                data_frame = self.conn.recv(frame_length)
+
+                if data_frame:
+                    data = struct.unpack(f"3s{frame_length - 3}B", data_frame)
 
                     if data[0].decode() == "CAN": # CAN
                         address, data = data[1:3], data[3:]

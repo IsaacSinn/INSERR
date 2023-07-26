@@ -23,18 +23,21 @@ class EthernetClient(Module):
 
         if message["type"] == "CAN":
 
+            START = "X".encode()
             message_type = "CAN".encode()
+
             address1 = message["address"] >> 8 & 0xff
             address2 = message["address"] & 0xff
+
             if message["data"] == []:
                 
                 data = [address1] + [address2] + [0]
             else:
                 data = [address1] + [address2] + message["data"]
 
-            format_string = f"{len(message_type)}s{len(data)}B"
+            format_string = format_string = f"1s1B3s{len(data)}B"
 
-            data_bytes = struct.pack(format_string, message_type, *data)
+            data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
 
         
         else: # LID, SON, IMU
@@ -53,16 +56,12 @@ class EthernetClient(Module):
 
             if data_receive:
                 data = struct.unpack(f"1s1B", data_receive)
-                print(data)
                 frame_length = data[1]
             
             data_frame = self.socket.recv(frame_length)
 
             if data_frame:
-                print(data_frame)
                 data = struct.unpack(f"3s{frame_length - 3}B", data_frame)
-
-                print(data)
                 
                 if data[0].decode() == "CAN": # CAN
                     address, data = data[1], data[2:]
