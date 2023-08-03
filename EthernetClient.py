@@ -43,7 +43,10 @@ class EthernetClient(Module):
 
             START = "X".encode()
             type = "TST".encode()
-            data_bytes = struct.pack("d", START, 5, type, message["data"])
+            
+            time_byte = struct.pack("d", message["data"])
+            data_bytes = struct.pack("1s1B3s", START, len(time_byte), type)
+            data_bytes = data_bytes + time_byte
 
 
         
@@ -64,7 +67,7 @@ class EthernetClient(Module):
             if data_receive:
                 data = struct.unpack(f"1s1B3s", data_receive)
                 frame_length = data[1]
-                type = data[2]
+                type = data[2].decode()
             
             data_frame = self.socket.recv(frame_length)
 
@@ -77,8 +80,8 @@ class EthernetClient(Module):
 
                 elif type == "TST":
                     data = struct.unpack("d", data_frame)
-                    time = data[0]
-                    pub.sendMessage("ethernet.send", message = {"type": "TST", "data": time})
+                    time_rec = data[0]
+                    pub.sendMessage("ethernet.send", message = {"type": "TST", "data": time_rec})
                 
                 else: # LID, SON, IMU
                     pass
@@ -89,8 +92,10 @@ class EthernetClient(Module):
         
 if __name__ == "__main__":
     from CANHandler import CANHandler
+    from PiCameraServer import PiCameraServer
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
+    PiCameraServer = PiCameraServer()
 
     EthernetClient.start(30)
     CANHandler.start(30)
