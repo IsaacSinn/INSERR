@@ -13,6 +13,8 @@ from ModuleBase import ModuleManager
 from pubsub import pub
 import socket
 import struct
+#######TO REMOVE
+import time
 
 class EthernetHandler(Module):
     def __init__(self):
@@ -31,7 +33,7 @@ class EthernetHandler(Module):
     def message_listener(self, message):
         
         # constructing data_byte struct
-        # if message is CAN, "address", "data"
+        # if message is CAN: START, length of data, "CAN", data
         if message["type"] == "CAN":
 
             START = "X".encode()
@@ -41,8 +43,13 @@ class EthernetHandler(Module):
 
             format_string = f"1s1B3s{len(data)}B"
 
-            data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
-            #print(data, data_bytes)
+            data_bytes = struct.pack(format_string, START, len(data), type, *data)
+        
+        elif message["type"] == "TST":
+
+            START = "X".encode()
+            type = "TST".encode()
+            data_bytes = struct.pack("d", START, 5, type, time.time())
         
         # else type is LID, SON, IMU
         else:
@@ -62,24 +69,29 @@ class EthernetHandler(Module):
         # receive
         if self.connected:
             try:
-                data_receive = self.conn.recv(2)
+                data_receive = self.conn.recv(5)
 
                 if data_receive:
-                    data = struct.unpack(f"1s1B", data_receive)
+                    data = struct.unpack(f"1s1B3s", data_receive)
                     frame_length = data[1]
+                    type = data[2]
                 
                 data_frame = self.conn.recv(frame_length)
 
                 if data_frame:
-                    data = struct.unpack(f"3s{frame_length - 3}B", data_frame)
-
-                    if data[0].decode() == "CAN": # CAN
-                        address, data = data[1:3], data[3:]
-                        #print(address, data)
+                    
+                    if type == "CAN":
+                        data = struct.unpack(f"{frame_length}B", data_frame)
+                        address, data = data[0], data[1:]
                         pub.sendMessage("can.receive", message = {"address": address, "data": data})
-                    else: # LID, SON, IMU
-                        type, data_send = data[0].decode(), data[1:]
-                        pub.sendMessage(f"{type}.receive", message = {"data": data_send})
+                    
+                    elif type == "TST":
+                        data = struct.unpack("d", data_frame)
+                        time = data[0]
+                        print((time.time() - time) / 2)
+                    
+                    else:
+                        pass
 
             except socket.error:
                 print(f"Disconnect from {self.addr}")
@@ -112,7 +124,7 @@ class TestEthernetHandler(Module):
         super().__init__()
 
     def run(self):
-        pub.sendMessage("ethernet.send", message = {"type": "CAN" ,"address": 0x10, "data": [0x20, 0x10, 0x00]})
+        pub.sendMessage("ethernet.send", message = {"type": "TST"})
 
 if __name__ == "__main__":
     EthernetClientHandler = EthernetClientHandler()

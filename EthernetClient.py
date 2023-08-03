@@ -37,7 +37,14 @@ class EthernetClient(Module):
 
             format_string = format_string = f"1s1B3s{len(data)}B"
 
-            data_bytes = struct.pack(format_string, START, len(data) + 3, type, *data)
+            data_bytes = struct.pack(format_string, START, len(data), type, *data)
+        
+        elif message["type"] == "TST":
+
+            START = "X".encode()
+            type = "TST".encode()
+            data_bytes = struct.pack("d", START, 5, type, message["data"])
+
 
         
         else: # LID, SON, IMU
@@ -52,23 +59,29 @@ class EthernetClient(Module):
     # receive
     def run(self):
         try:
-            data_receive = self.socket.recv(2) # get 2 bytes first, X start of frame, 1 integer length of frame
+            data_receive = self.socket.recv(5) # get 2 bytes first, X start of frame, 1 integer length of frame
 
             if data_receive:
-                data = struct.unpack(f"1s1B", data_receive)
+                data = struct.unpack(f"1s1B3s", data_receive)
                 frame_length = data[1]
+                type = data[2]
             
             data_frame = self.socket.recv(frame_length)
 
             if data_frame:
-                data = struct.unpack(f"3s{frame_length - 3}B", data_frame)
-                
-                if data[0].decode() == "CAN": # CAN
-                    address, data = data[1], data[2:]
+
+                if type == "CAN":
+                    data = struct.unpack(f"{frame_length}B", data_frame)
+                    address, data = data[0], data[1:]
                     pub.sendMessage("can.send", message = {"address": address, "data": data})
+
+                elif type == "TST":
+                    data = struct.unpack("d", data_frame)
+                    time = data[0]
+                    pub.sendMessage("ethernet.send", message = {"type": "TST", "data": time})
+                
                 else: # LID, SON, IMU
-                    type, data = data[0].decode(), data[1:]
-                    pub.sendMessage(f"{type}.send", message = {"data": data})
+                    pass
 
         except socket.error:
             self.socket.close()
