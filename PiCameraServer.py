@@ -83,9 +83,9 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 class PiCameraServer(Module):
     def __init__(self):
-        super.__init__()
+        super().__init__()
     
-    def run_once_in_thread(self):
+    def run(self):
         global output
         picam2 = Picamera2()
         picam2.configure(picam2.create_video_configuration(main={"size": (1280, 720)}))
