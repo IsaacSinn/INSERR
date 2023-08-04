@@ -96,12 +96,11 @@ class EthernetClient(Module):
         
 if __name__ == "__main__":
     from CANHandler import CANHandler
-    from PiCameraServer import PiCameraServer
+    from PiCameraServer import *
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
-    PiCameraServer = PiCameraServer()
 
     EthernetClient.start(30)
     CANHandler.start(30)
-    PiCameraServer.start(1)
+    PiCameraServer()
 
