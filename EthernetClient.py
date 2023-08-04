@@ -10,7 +10,7 @@ class EthernetClient(Module):
         super().__init__()
 
         self.HOST = "169.254.196.165"  # The server's hostname or IP address
-        self.PORT = 50000  # The port used by the server
+        self.PORT = 50001  # The port used by the server
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((self.HOST, self.PORT))
@@ -48,7 +48,6 @@ class EthernetClient(Module):
             data_bytes = struct.pack("1s1B3s", START, len(time_byte), type)
             data_bytes = data_bytes + time_byte
 
-
         
         else: # LID, SON, IMU
             pass
@@ -66,8 +65,13 @@ class EthernetClient(Module):
 
             if data_receive:
                 data = struct.unpack(f"1s1B3s", data_receive)
-                frame_length = data[1]
-                type = data[2].decode()
+                if data[0].decode() == "X":
+                    frame_length = data[1]
+                    type = data[2].decode()
+                else:
+                    frame_length = 0
+            else:
+                frame_length = 0
             
             data_frame = self.socket.recv(frame_length)
 
@@ -99,4 +103,5 @@ if __name__ == "__main__":
 
     EthernetClient.start(30)
     CANHandler.start(30)
+    PiCameraServer.start(1)
 
