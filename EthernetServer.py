@@ -79,8 +79,13 @@ class EthernetHandler(Module):
 
                 if data_receive:
                     data = struct.unpack(f"1s1B3s", data_receive)
-                    frame_length = data[1]
-                    type = data[2].decode()
+                    if data[0].decode() == "X":
+                        frame_length = data[1]
+                        type = data[2].decode()
+                    else:
+                        frame_length = 0
+                else:
+                    frame_length = 0
                 
                 data_frame = self.conn.recv(frame_length)
 
@@ -103,8 +108,6 @@ class EthernetHandler(Module):
                 print(f"Disconnect from {self.addr}")
                 self.conn = None
                 self.connected = False
-    
-    # need to re-run rpi program when ethernet disconnect
 
 # connects to a new client when available
 class EthernetClientHandler(Module):
@@ -112,7 +115,7 @@ class EthernetClientHandler(Module):
         super().__init__()
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind(("", 50000))
+        self.socket.bind(("", 50001))
         self.socket.listen()
         self.EthernetHandler = EthernetHandler()
         mm = ModuleManager()
@@ -137,7 +140,7 @@ if __name__ == "__main__":
     TestEthernetHandler = TestEthernetHandler()
 
     EthernetClientHandler.start(1)
-    TestEthernetHandler.start(20)
+    TestEthernetHandler.start(1)
         
 
 
