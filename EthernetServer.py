@@ -115,6 +115,7 @@ class EthernetClientHandler(Module):
         super().__init__()
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", 50001))
         self.socket.listen()
         self.EthernetHandler = EthernetHandler()
@@ -140,7 +141,7 @@ if __name__ == "__main__":
     TestEthernetHandler = TestEthernetHandler()
 
     EthernetClientHandler.start(1)
-    TestEthernetHandler.start(1)
+    TestEthernetHandler.start(40)
         
 
 

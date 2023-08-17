@@ -1,7 +1,4 @@
-# TODO: Change serial bandwidth for CAN-USB, 
-
-
-import time
+import sys
 from ModuleBase import ModuleManager
 from PyGameServices import PyGameServices
 
@@ -14,12 +11,13 @@ from Thrusters import Thrusters
 from CANHandler import CANHandler
 from Logger import Logger
 from EthernetServer import EthernetClientHandler
+import os
+
+os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 
 mm = ModuleManager()
 pygs = PyGameServices()
 pygs.start(100)
-
-GUI_FPS = 60
 
 GUI = GUI()
 Joystick = Joystick()
@@ -35,7 +33,7 @@ Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER
 
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
-            (GUI, GUI_FPS),
+            (GUI, 60),
             (Joystick, 60),
             (ControlProfileA, 1),
             (ControlProfileB, 1),
@@ -47,11 +45,25 @@ mm.register(
             # (CANHandler, 1),
 )
 
-mm.start_all()
-
 try:
-    while True:
-        pygs.get_pygame().event.get()
-        pygs.get_pygame().time.delay((2)) # ms
+    mm.start_all()
+    pygame = pygs.get_pygame()
+
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 except KeyboardInterrupt:
+    pygame.display.quit()
+    pygame.quit()
     mm.stop_all()
+    print("stopped all modules")
+    sys.exit()
+finally:
+    pygame.display.quit()
+    pygame.quit()
+    mm.stop_all()
+    #TODO: stuck at stopping ethernet client handler, blocking call socket.accept() 
+    print("stopped all modules")
+    sys.exit()

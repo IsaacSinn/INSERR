@@ -78,7 +78,6 @@ class ModuleManager():
     def stop_all(cls):
         for index, module in enumerate(cls.modules):
             module_name = cls.modules_name[index]
-
             module.stop()
             print(f"{module_name} stopped")
 

@@ -75,20 +75,38 @@ class Thrusters(Module):
                 
                 pub.sendMessage("ethernet.send", message = {"type": "CAN", "address": self.Thrusters[counter]["Address"], "data": [32, self.output_power[counter] >> 8 & 0xff, self.output_power[counter] & 0xff]})
                 pub.sendMessage("thrusters.info", message = {"thrusters_output": self.output_power})
-            #print(self.output_power)
 
 
 class __Test_Case_Send__(Module):
     def __init__(self):
         super().__init__()
-        pub.subscribe(self.can_send_listener, "can.send")
+        pub.subscribe(self.ethernet_send_listener, "ethernet.send")
 
-    def can_send_listener(self, message):
-        print('address:' ,message["address"], 'data(binary):', message["data"], 'data(int):', message["data"][1] << 8| message["data"][2])
+    def ethernet_send_listener(self, message):
+        if message["address"] == 18:
+            print(message)
 
     def run(self):
-        pub.sendMessage("thruster.power", message = {"thruster_power": [[0.0001,0,0,0,0,0]]})
-        self.stop_all()
+        time.sleep(10)
+        while True:
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0.10,0,0]]})
+            time.sleep(3)
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,0,0]]})
+            time.sleep(3)
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,-0.10,0,0]]})
+            time.sleep(3)
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,0,0]]})
+            time.sleep(3)
+            
 
 if __name__ == "__main__":
-    pass
+    import time
+
+    from EthernetServer import EthernetClientHandler
+    Thrusters = Thrusters()
+    __Test_Case_Send__ = __Test_Case_Send__()
+    EthernetClientHandler = EthernetClientHandler()
+
+    __Test_Case_Send__.start(1)
+    EthernetClientHandler.start(1)
+    Thrusters.start(1)
