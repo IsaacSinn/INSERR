@@ -102,5 +102,5 @@ if __name__ == "__main__":
 
     EthernetClient.start(30)
     CANHandler.start(30)
-    PiCameraServer()
+    #PiCameraServer()
 
