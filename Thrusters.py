@@ -83,17 +83,17 @@ class __Test_Case_Send__(Module):
         pub.subscribe(self.ethernet_send_listener, "ethernet.send")
 
     def ethernet_send_listener(self, message):
-        if message["address"] == 18:
+        if message["address"] == 21:
             print(message)
 
     def run(self):
         time.sleep(10)
         while True:
-            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0.10,0,0]]})
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,0.15,0]]})
             time.sleep(3)
             pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,0,0]]})
             time.sleep(3)
-            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,-0.10,0,0]]})
+            pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,-0.15,0]]})
             time.sleep(3)
             pub.sendMessage("thruster.power", message = {"thruster_power": [[0,0,0,0,0,0]]})
             time.sleep(3)

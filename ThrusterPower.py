@@ -43,6 +43,7 @@ class ThrusterPower(Module):
             Torque = np.cross(ThrusterPosition, ThrusterDirection)
             ThrusterArray = np.concatenate((ThrusterDirection, Torque)).reshape(6,1)
             self.ThrusterMatrix = np.concatenate((self.ThrusterMatrix, ThrusterArray), axis = 1)
+        print(self.ThrusterMatrix)
 
         for i in range(6):
             message = [0] * 6
@@ -131,9 +132,13 @@ class __Test_Case_Single__(Module):
         print("message: ", message["thruster_power"])
 
     def run(self):
-        initial = time.time()
+        time.sleep(1)
         pub.sendMessage("control.movement", message = {"control_movement": (0,1,0,1,0,0)})
 
 
 if __name__ == "__main__":
-    pass
+    __Test_Case_Single__ = __Test_Case_Single__()
+    ThrusterPower = ThrusterPower()
+
+    ThrusterPower.start(1)
+    __Test_Case_Single__.start(1)
