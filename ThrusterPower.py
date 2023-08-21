@@ -43,7 +43,7 @@ class ThrusterPower(Module):
             Torque = np.cross(ThrusterPosition, ThrusterDirection)
             ThrusterArray = np.concatenate((ThrusterDirection, Torque)).reshape(6,1)
             self.ThrusterMatrix = np.concatenate((self.ThrusterMatrix, ThrusterArray), axis = 1)
-        print(self.ThrusterMatrix)
+        print(self.ThrusterMatrix[0:6,1:7])
 
         for i in range(6):
             message = [0] * 6
@@ -72,8 +72,7 @@ class ThrusterPower(Module):
 
     def invert(self, finalList):
         for counter, Thruster in enumerate(self.Thrusters):
-            if Thruster["Invert"] == "True":
-                finalList[counter, 0] *= -1
+            finalList[counter, 0] *= -1
         return finalList
 
     def overallScale(self, finalList):
@@ -111,7 +110,8 @@ class ThrusterPower(Module):
         expectedResult = np.array((Strafe, Drive, Updown, TiltFB, TiltLR, Yaw)).reshape(6,1)
         finalList = self.pseudoInv(expectedResult)
         finalList = self.directionScale(finalList)
-        #finalList = self.invert(finalList)
+        finalList = self.invert(finalList)
+        ############ inverted from thruster desired direction to thrust direction
         finalList = self.truncate(finalList)
 
         finalList = finalList.reshape(1,6)

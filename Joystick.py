@@ -191,9 +191,11 @@ class Joystick(Module):
         BLR = deadzone_back(BL + BR)
 
         if self.control_invert:
-            self.new_movement_message = [LLR, -LUD, RLR, BLR, -RUD, 0]
+            self.new_movement_message = [-LLR, -LUD, -RLR, -BLR, RUD, 0]
         else:
-            self.new_movement_message = [-LLR,  LUD, RLR, BLR,  RUD, 0]    #(strafe, drive, yaw, updown, tilt, 0)
+            self.new_movement_message = [LLR,  LUD, -RLR, -BLR,  -RUD, 0]    #(strafe, drive, yaw, updown, tilt / pitch, 0)
+
+        ################### RLR / Yaw is flipped ##################
 
 
         # PUB LOOP
