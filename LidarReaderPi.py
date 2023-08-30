@@ -11,20 +11,18 @@ PORT_NAME = '/dev/ttyUSB0'
 
 class LidarReaderPi(Module):
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
         self.localtime = time.strftime('%Y-%m-%d, %H-%M-%S')
-        try:
-            self.lidar = RPLidar(PORT_NAME)
-        except:
-            print("Lidar port incorrect")
-        self.outfile = open("./LidarData/Lidar_Data " + self.localTime + '.txt', 'w')
+        
+        self.lidar = RPLidar(PORT_NAME)
+        self.outfile = open("./LidarData/Lidar_Data " + self.localtime + '.txt', 'w')
     
     def run(self):
     
         try:
             print("lidar measuring")
-            for measurment in self.lidar.iter_measurments():
+            for measurment in self.lidar.iter_measures():
                 line = '\t'.join(str(v) for v in measurment)
                 self.outfile.write(line + "\t" + str(time.time()) + '\n')
         except KeyboardInterrupt:
