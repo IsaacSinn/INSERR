@@ -96,11 +96,15 @@ class EthernetClient(Module):
         
 if __name__ == "__main__":
     from CANHandler import CANHandler
-    from PiCameraServer import *
+    from IMUReaderPi import *
+    from USBCameraClient import *
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
 
     EthernetClient.start(30)
     CANHandler.start(30)
-    PiCameraServer()
+    write() # IMU
+    # USBCameraClient() # USB Camera
+
+
 

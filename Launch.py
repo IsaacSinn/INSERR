@@ -30,7 +30,7 @@ Thrusters = Thrusters()
 EthernetClientHandler = EthernetClientHandler()
 # CANHandler = CANHandler(115200) # BAUDRATE
 Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
-
+    
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
             (GUI, 60),
