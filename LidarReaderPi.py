@@ -26,7 +26,7 @@ class LidarReaderPi(Module):
             print("lidar measuring")
             for measurment in self.lidar.iter_measurments():
                 line = '\t'.join(str(v) for v in measurment)
-                self.outfile.write(line + '\n')
+                self.outfile.write(line + "\t" + str(time.time()) + '\n')
         except KeyboardInterrupt:
             print('lidar stop')
         self.lidar.stop()
