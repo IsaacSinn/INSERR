@@ -31,23 +31,3 @@ class LidarReaderPi(Module):
         self.outfile.close()
             
         
-
-
-# def run(path):
-#     '''Main function'''
-#     lidar = RPLidar(PORT_NAME)
-#     outfile = open(path, 'w')
-#     try:
-#         print('Recording measurments... Press Crl+C to stop.')
-#         for measurment in lidar.iter_measurments():
-#             line = '\t'.join(str(v) for v in measurment)
-#             outfile.write(line + '\n')
-#     except KeyboardInterrupt:
-#         print('Stoping.')
-#     lidar.stop()
-#     lidar.disconnect()
-#     outfile.close()
-
-# def LidarReaderPi():
-#     localTime = time.strftime('%Y-%m-%d, %H-%M-%S')
-#     run("./LidarData/Lidar_Data " + localTime + '.txt')

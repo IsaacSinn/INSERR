@@ -5,51 +5,30 @@ import time
 from datetime import datetime
 import board
 import adafruit_bno055
+from ModuleBase import Module
 
 
-i2c = board.I2C()  # uses board.SCL and board.SDA
-# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
-sensor = adafruit_bno055.BNO055_I2C(i2c)
+class IMUReaderPi(Module):
+    def __init__(self):
+        super().__init__()
 
-# If you are going to use UART uncomment these lines
-# uart = board.UART()
-# sensor = adafruit_bno055.BNO055_UART(uart)
+        i2c = board.I2C()
+        self.sensor = adafruit_bno055.BNO055_I2C(i2c)
+        self.last_val = 0xFFFF
+        localTime = time.strftime('%Y-%m-%d, %H-%M-%S')
 
-last_val = 0xFFFF
-
-
-def temperature():
-    global last_val  # pylint: disable=global-statement
-    result = sensor.temperature
-    if abs(result - last_val) == 128:
-        result = sensor.temperature
-        if abs(result - last_val) == 128:
-            return 0b00111111 & result
-    last_val = result
-    return result
-
-localTime = time.strftime('%Y-%m-%d, %H-%M-%S')
-timeObj = datetime.now()
-
-file1 = open('./IMUData/IMU_Data ' + localTime + '.txt', 'w')
-file1.write("Temp (c), Acc\n")
-
-def IMUReaderPi():
-    while True:
-        #print("Temperature: {} degrees C".format(sensor.temperature))
+        self.file = open('./IMUData/IMU_Data ' + localTime + '.txt', 'w')
+        self.file.write("Temp (c), Acc\n")
+    
+    def temperature(self):
+        result = self.sensor.temperature
+        if abs(result - self.last_val) == 128:
+            result = self.sensor.temperature
+            if abs(result - self.last_val) == 128:
+                return 0b00111111 & result
+        self.last_val = result
+        return result
+    
+    def run(self):
+        self.file.write("(" + str(self.temperature()) +")\t" + str(self.sensor.acceleration) + "\t" + str(self.sensor.magnetic) +"\t" + str(self.sensor.gyro)+ "\t" + str(self.sensor.euler)+"\t" + str(self.sensor.quaternion)+"\t" + str(self.sensor.linear_acceleration)+"\t" + str(self.sensor.gravity)+ "\t(" +  str(time.time()) +")\n")
         
-        # print(
-        #     "Temperature: {} degrees C".format(temperature())
-        # )  # Uncomment if using a Raspberry Pi
-        
-        # print("Accelerometer (m/s^2): {}".format(sensor.acceleration))
-        # print("Magnetometer (microteslas): {}".format(sensor.magnetic))
-        # print("Gyroscope (rad/sec): {}".format(sensor.gyro))
-        # print("Euler angle: {}".format(sensor.euler))
-        # print("Quaternion: {}".format(sensor.quaternion))
-        # sprint("Linear acceleration (m/s^2): {}".format(sensor.linear_acceleration))
-        # print("Gravity (m/s^2): {}".format(sensor.gravity))
-        # print()
-        
-        file1.write("(" + str(temperature()) +")\t" + str(sensor.acceleration) + "\t" + str(sensor.magnetic) +"\t" + str(sensor.gyro)+ "\t" + str(sensor.euler)+"\t" + str(sensor.quaternion)+"\t" + str(sensor.linear_acceleration)+"\t" + str(sensor.gravity)+ "\t(" +  str(time.time()) +")\n")
-        time.sleep(0.01)
