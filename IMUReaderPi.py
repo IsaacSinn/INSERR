@@ -34,7 +34,7 @@ timeObj = datetime.now()
 file1 = open('./IMUData/IMU_Data ' + localTime + '.txt', 'w')
 file1.write("Temp (c), Acc\n")
 
-def write():
+def IMUReaderPi():
     while True:
         #print("Temperature: {} degrees C".format(sensor.temperature))
         
@@ -51,5 +51,5 @@ def write():
         # print("Gravity (m/s^2): {}".format(sensor.gravity))
         # print()
         
-        file1.write("(" + str(temperature()) +")\t" + str(sensor.acceleration) + "\t" + str(sensor.magnetic) +"\t" + str(sensor.gyro)+ "\t" + str(sensor.euler)+"\t" + str(sensor.quaternion)+"\t" + str(sensor.linear_acceleration)+"\t" + str(sensor.gravity)+ "\t(" +  str(timeObj) +")\n")
+        file1.write("(" + str(temperature()) +")\t" + str(sensor.acceleration) + "\t" + str(sensor.magnetic) +"\t" + str(sensor.gyro)+ "\t" + str(sensor.euler)+"\t" + str(sensor.quaternion)+"\t" + str(sensor.linear_acceleration)+"\t" + str(sensor.gravity)+ "\t(" +  str(time.time()) +")\n")
         time.sleep(0.01)
