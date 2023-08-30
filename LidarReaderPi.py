@@ -14,7 +14,10 @@ class LidarReaderPi(Module):
         super.__init__()
 
         self.localtime = time.strftime('%Y-%m-%d, %H-%M-%S')
-        self.lidar = RPLidar(PORT_NAME)
+        try:
+            self.lidar = RPLidar(PORT_NAME)
+        except:
+            print("Lidar port incorrect")
         self.outfile = open("./LidarData/Lidar_Data " + self.localTime + '.txt', 'w')
     
     def run(self):

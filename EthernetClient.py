@@ -97,6 +97,7 @@ class EthernetClient(Module):
 if __name__ == "__main__":
     from CANHandler import CANHandler
     from LidarReaderPi import LidarReaderPi
+    from IMUReaderPi import IMUReaderPi
 
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
@@ -107,8 +108,9 @@ if __name__ == "__main__":
     LidarReaderPi = LidarReaderPi()
     LidarReaderPi.start(1)
 
-    from IMUReaderPi import *
-    IMUReaderPi() # IMU
+    IMUReaderPi = IMUReaderPi()
+    IMUReaderPi.start(100)
+
     
     
 
