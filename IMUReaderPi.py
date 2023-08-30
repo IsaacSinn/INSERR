@@ -47,7 +47,7 @@ def write():
         # print("Gyroscope (rad/sec): {}".format(sensor.gyro))
         # print("Euler angle: {}".format(sensor.euler))
         # print("Quaternion: {}".format(sensor.quaternion))
-        # print("Linear acceleration (m/s^2): {}".format(sensor.linear_acceleration))
+        # sprint("Linear acceleration (m/s^2): {}".format(sensor.linear_acceleration))
         # print("Gravity (m/s^2): {}".format(sensor.gravity))
         # print()
         
