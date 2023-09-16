@@ -3,7 +3,7 @@ import socket
 import struct
 import time
 
-IP = '169.254.196.165'
+IP = '192.168.50.198'
 PORT = 8080
 
 def connect_to_server():
@@ -28,7 +28,7 @@ def camera(cam_num, cam_format, v_width, v_height, v_fps):
     cam.set(cv2.CAP_PROP_CONVERT_RGB, 0)
     fourcc = cv2.VideoWriter_fourcc(*cam_format)
     cam.set(cv2.CAP_PROP_FOURCC, fourcc)
-    cam.set(cv2.CAP_PROP_HW_ACCELERATION, cv2.VIDEO_ACCELERATION_ANY)
+    #cam.set(cv2.CAP_PROP_HW_ACCELERATION, cv2.VIDEO_ACCELERATION_ANY)
     cam.set(cv2.CAP_PROP_FRAME_WIDTH, v_width)
     cam.set(cv2.CAP_PROP_FRAME_HEIGHT, v_height)
     cam.set(cv2.CAP_PROP_FPS, v_fps)
