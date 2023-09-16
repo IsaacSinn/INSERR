@@ -39,7 +39,7 @@ def camera(cam_num, cam_format, v_width, v_height, v_fps):
 
 
 
-def USBCameraClient():
+def USBCameraClient(client_socket):
     while True:
         # Read the frame
         ret, image = cam0.read()
@@ -69,4 +69,4 @@ client_socket = connect_to_server()
 # Start camera
 cam0 = camera(0, 'MJPG', 1920, 1080, 60)
 
-USBCameraClient()
+USBCameraClient(client_socket)
