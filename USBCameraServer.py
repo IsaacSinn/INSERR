@@ -77,3 +77,5 @@ def USBCameraServer():
         # Close the server socket and release any other resources when exiting
         server_socket.close()
         cv2.destroyAllWindows()
+
+USBCameraServer()

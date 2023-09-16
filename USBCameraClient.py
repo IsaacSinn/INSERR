@@ -39,7 +39,7 @@ def camera(cam_num, cam_format, v_width, v_height, v_fps):
 client_socket = connect_to_server()
 
 # Start camera
-cam0 = camera(0, 'MJPG', 19280, 1080, 60)
+cam0 = camera(0, 'MJPG', 1920, 1080, 60)
 
 
 
@@ -67,3 +67,4 @@ def USBCameraClient():
     client_socket.close()
     cv2.destroyAllWindows()
 
+USBCameraClient()
