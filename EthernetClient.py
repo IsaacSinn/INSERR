@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # IMUReaderPi = IMUReaderPi()
     # IMUReaderPi.start(100)
 
-    # start()
+    start()
 
     
     
