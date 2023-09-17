@@ -24,11 +24,19 @@ class EthernetHandler(Module):
         self.conn = None
         self.addr = None
         self.connected = False
-    
-    def update_conn(self, conn, addr):
-        self.conn = conn
-        self.addr = addr
-        self.connected = True
+
+        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+        self.socket.bind(("", 50001))
+        self.socket.listen()
+        self.wait_for_client()
+
+    def wait_for_client(self):
+        while True:
+            self.conn, self.addr = self.socket.accept()
+            self.connected = True
+            print(f"Connected to {self.addr}")
+            break
     
     def message_listener(self, message):
         
@@ -67,8 +75,8 @@ class EthernetHandler(Module):
                 self.conn.sendall(data_bytes)
             except socket.error:
                 print(f"Disconnect from {self.addr}")
-                self.conn = None
                 self.connected = False
+                self.wait_for_client()
 
     def run(self):
 
@@ -106,27 +114,27 @@ class EthernetHandler(Module):
 
             except socket.error:
                 print(f"Disconnect from {self.addr}")
-                self.conn = None
                 self.connected = False
+                self.wait_for_client()
 
-# connects to a new client when available
-class EthernetClientHandler(Module):
-    def __init__(self):
-        super().__init__()
+# # connects to a new client when available
+# class EthernetClientHandler(Module):
+#     def __init__(self):
+#         super().__init__()
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.socket.bind(("", 50001))
-        self.socket.listen()
-        self.EthernetHandler = EthernetHandler()
-        mm = ModuleManager()
-        mm.register((self.EthernetHandler, 30))
-        mm.start("EthernetHandler")
+#         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+#         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+#         self.socket.bind(("", 50001))
+#         self.socket.listen()
+#         self.EthernetHandler = EthernetHandler()
+#         mm = ModuleManager()
+#         mm.register((self.EthernetHandler, 30))
+#         mm.start("EthernetHandler")
     
-    def run(self):
-        self.conn, self.addr = self.socket.accept()
-        print(f"Connected to {self.addr}")
-        self.EthernetHandler.update_conn(self.conn, self.addr)
+#     def run(self):
+#         self.conn, self.addr = self.socket.accept()
+#         print(f"Connected to {self.addr}")
+#         self.EthernetHandler.update_conn(self.conn, self.addr)
 
 
 class TestEthernetHandler(Module):
@@ -137,10 +145,10 @@ class TestEthernetHandler(Module):
         pub.sendMessage("ethernet.send", message = {"type": "TST", "address": 0x15, "data": [0x20, 0x10, 0x00]})
 
 if __name__ == "__main__":
-    EthernetClientHandler = EthernetClientHandler()
+    EthernetHandler = EthernetHandler()
     TestEthernetHandler = TestEthernetHandler()
 
-    EthernetClientHandler.start(1)
+    EthernetHandler.start(30)
     TestEthernetHandler.start(1)
         
 
