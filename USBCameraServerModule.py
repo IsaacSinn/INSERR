@@ -10,39 +10,54 @@ from pubsub import pub
 
 PORT = 8080
 
-class USBEthernetClientHandler(Module):
+class USBCameraHandler(Module):
     def __init__(self):
         super().__init__()
+
+        self.conn = None
+        self.addr = None
+        self.connected = False
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", PORT))
         self.socket.listen()
+        self.wait_for_client()
     
-
-class USBCameraServer(Module):
-
-    # receive frames
+    # waits for client connection
+    def wait_for_client(self):
+        while True:
+            self.conn, self.addr = self.socket.accept()
+            self.connected = True
+            print(f"USB Connected {self.addr}")
+            break
+    
+    # receives camera frame and publish it out
     def run(self):
-        # Receive the frame size from the client
-        frame_size_data = client_socket.recv(struct.calcsize('<L'))
-        if frame_size_data:
-            frame_size = struct.unpack('<L', frame_size_data)[0]
+        if self.connected:
+            try:
 
-            # Receive the frame data from the client
-            frame_data = b''
-            while len(frame_data) < frame_size:
-                data = client_socket.recv(frame_size - len(frame_data))
-                if not data:
-                    break
-                frame_data += data
+                # Receive the frame size from the client
+                frame_size_data = self.conn.recv(struct.calcsize('<L'))
+                if frame_size_data:
+                    frame_size = struct.unpack('<L', frame_size_data)[0]
 
-            # Decode the MJPEG data and convert it to a BGR image
-            frame = cv2.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv2.IMREAD_COLOR)
+                    # Receive the frame data from the client
+                    frame_data = b''
+                    while len(frame_data) < frame_size:
+                        data = self.conn.recv(frame_size - len(frame_data))
+                        if not data:
+                            break
+                        frame_data += data
 
-            cv2.imshow('Frame', frame)
+                    # Decode the MJPEG data and convert it to a BGR image
+                    frame = cv2.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv2.IMREAD_COLOR)
 
-            k = cv2.waitKey(1)
-            if k == 27:
-                self.stop()
+                    pub.sendMesage("usb")
+            
+            except socket.error:
+                print(f"USB Disconnected from {self.addr}")
+                self.connected = False
+                self.socket.close()
+                self.wait_for_client()
 

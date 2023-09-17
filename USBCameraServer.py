@@ -15,6 +15,7 @@ def receive_frames(client_socket, frame_queue):
             if not frame_size_data:
                 break
             frame_size = struct.unpack('<L', frame_size_data)[0]
+            print(f"frame_size_data: {frame_size_data}")
 
             # Receive the frame data from the client
             frame_data = b''

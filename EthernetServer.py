@@ -13,7 +13,6 @@ from ModuleBase import ModuleManager
 from pubsub import pub
 import socket
 import struct
-#######TO REMOVE
 import time
 
 class EthernetHandler(Module):
@@ -31,6 +30,7 @@ class EthernetHandler(Module):
         self.socket.listen()
         self.wait_for_client()
 
+    # waits for client connection
     def wait_for_client(self):
         while True:
             self.conn, self.addr = self.socket.accept()
@@ -38,6 +38,7 @@ class EthernetHandler(Module):
             print(f"Connected to {self.addr}")
             break
     
+    # callback function for "ethernet.send" pubsub channel
     def message_listener(self, message):
         
         # constructing data_byte struct
@@ -76,6 +77,7 @@ class EthernetHandler(Module):
             except socket.error:
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
+                self.socket.close()
                 self.wait_for_client()
 
     def run(self):
@@ -87,6 +89,7 @@ class EthernetHandler(Module):
 
                 if data_receive:
                     data = struct.unpack(f"1s1B3s", data_receive)
+                    print(data)
                     if data[0].decode() == "X":
                         frame_length = data[1]
                         type = data[2].decode()
@@ -98,6 +101,9 @@ class EthernetHandler(Module):
                 data_frame = self.conn.recv(frame_length)
 
                 if data_frame:
+                    # USB Camera
+                    if type == "CAM":
+                        pass
                     
                     if type == "CAN":
                         data = struct.unpack(f"{frame_length}B", data_frame)
@@ -112,29 +118,11 @@ class EthernetHandler(Module):
                     else: # LID, SON, IMU
                         pass
 
-            except socket.error:
+            except (socket.error, ConnectionAbortedError):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
+                self.socket.close()
                 self.wait_for_client()
-
-# # connects to a new client when available
-# class EthernetClientHandler(Module):
-#     def __init__(self):
-#         super().__init__()
-
-#         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-#         self.socket.bind(("", 50001))
-#         self.socket.listen()
-#         self.EthernetHandler = EthernetHandler()
-#         mm = ModuleManager()
-#         mm.register((self.EthernetHandler, 30))
-#         mm.start("EthernetHandler")
-    
-#     def run(self):
-#         self.conn, self.addr = self.socket.accept()
-#         print(f"Connected to {self.addr}")
-#         self.EthernetHandler.update_conn(self.conn, self.addr)
 
 
 class TestEthernetHandler(Module):
@@ -148,7 +136,7 @@ if __name__ == "__main__":
     EthernetHandler = EthernetHandler()
     TestEthernetHandler = TestEthernetHandler()
 
-    EthernetHandler.start(30)
+    EthernetHandler.start(120)
     TestEthernetHandler.start(1)
         
 

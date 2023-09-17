@@ -10,9 +10,10 @@ from ThrusterPower import ThrusterPower
 from Thrusters import Thrusters
 from CANHandler import CANHandler
 from Logger import Logger
-from EthernetServer import EthernetClientHandler
+from EthernetServer import EthernetHandler
 import os
 
+# allow pygame to not be in focus and still works
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 
 mm = ModuleManager()
@@ -27,7 +28,7 @@ ControlProfileC = ControlProfile(50, 50, "C")
 ControlProfileD = ControlProfile(30, 50, "D")
 ThrusterPower = ThrusterPower()
 Thrusters = Thrusters()
-EthernetClientHandler = EthernetClientHandler()
+EthernetHandler = EthernetHandler()
 # CANHandler = CANHandler(115200) # BAUDRATE
 Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
     
@@ -41,7 +42,7 @@ mm.register(
             (ControlProfileD, 1),
             (ThrusterPower, 60),
             (Thrusters, 3),
-            (EthernetClientHandler, 1)
+            (EthernetHandler, 120)
             # (CANHandler, 1),
 )
 

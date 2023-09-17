@@ -55,7 +55,7 @@ class EthernetClient(Module):
             type = "TST".encode()
             
             time_byte = struct.pack("d", message["data"])
-            data_bytes = struct.pack("1s1B3s", START, len(time_byte), type)
+            data_bytes = struct.pack("1s<L3s", START, len(time_byte), type)
             data_bytes = data_bytes + time_byte
 
         
