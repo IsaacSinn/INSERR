@@ -133,10 +133,10 @@ if __name__ == "__main__":
     TestEthernetHandler = TestEthernetHandler()
 
     EthernetHandler.start(200)
-    TestEthernetHandler.start(2)
+    TestEthernetHandler.start(40)
 
-    from USBCameraServer import *
-    USBCameraServer()
+    # from USBCameraServer import *
+    # USBCameraServer()
         
 
 

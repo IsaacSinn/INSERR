@@ -115,7 +115,7 @@ if __name__ == "__main__":
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
 
-    EthernetClient.start(30)
+    EthernetClient.start(200)
     CANHandler.start(30)
 
     # LidarReaderPi = LidarReaderPi()
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     # IMUReaderPi = IMUReaderPi()
     # IMUReaderPi.start(100)
 
-    start()
+    # start()
 
     
     

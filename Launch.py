@@ -29,7 +29,6 @@ ControlProfileD = ControlProfile(30, 50, "D")
 ThrusterPower = ThrusterPower()
 Thrusters = Thrusters()
 EthernetHandler = EthernetHandler()
-# CANHandler = CANHandler(115200) # BAUDRATE
 Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
     
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
@@ -43,7 +42,6 @@ mm.register(
             (ThrusterPower, 60),
             (Thrusters, 3),
             (EthernetHandler, 120)
-            # (CANHandler, 1),
 )
 
 try:
