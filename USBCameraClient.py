@@ -3,7 +3,7 @@ import socket
 import struct
 import time
 
-IP = '192.168.50.198'
+IP = '169.254.196.165'
 PORT = 8080
 
 def connect_to_server():
@@ -36,9 +36,6 @@ def camera(cam_num, cam_format, v_width, v_height, v_fps):
     return cam
 
 
-
-
-
 def USBCameraClient(client_socket):
     while True:
         # Read the frame
@@ -67,6 +64,6 @@ def USBCameraClient(client_socket):
 client_socket = connect_to_server()
 
 # Start camera
-cam0 = camera(0, 'MJPG', 1920, 1080, 60)
+cam0 = camera(0, 'MJPG', 1280, 720, 30)
 
 USBCameraClient(client_socket)
