@@ -60,10 +60,12 @@ def USBCameraClient(client_socket):
     client_socket.close()
     cv2.destroyAllWindows()
 
-# Connect to the server
-client_socket = connect_to_server()
+def start():
+    global cam0
+    # Connect to the server
+    client_socket = connect_to_server()
 
-# Start camera
-cam0 = camera(0, 'MJPG', 1280, 720, 30)
+    # Start camera
+    cam0 = camera(0, 'MJPG', 1280, 720, 30)
 
-USBCameraClient(client_socket)
+    USBCameraClient(client_socket)

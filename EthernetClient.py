@@ -110,6 +110,7 @@ if __name__ == "__main__":
     from CANHandler import CANHandler
     from LidarReaderPi import LidarReaderPi
     from IMUReaderPi import IMUReaderPi
+    from USBCameraClient import *
 
     EthernetClient = EthernetClient()
     CANHandler = CANHandler(250000)
@@ -122,6 +123,8 @@ if __name__ == "__main__":
 
     # IMUReaderPi = IMUReaderPi()
     # IMUReaderPi.start(100)
+
+    start()
 
     
     
