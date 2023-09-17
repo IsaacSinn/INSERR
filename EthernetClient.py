@@ -12,12 +12,22 @@ class EthernetClient(Module):
         self.HOST = "169.254.196.165"  # The server's hostname or IP address
         self.PORT = 50001  # The port used by the server
 
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.HOST, self.PORT))
-
-        print(f"Connected to server {self.HOST}")
+        self.connect_to_server()
 
         pub.subscribe(self.message_listener, "ethernet.send")
+
+    def connect_to_server(self):
+        while True:
+            try:
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.connect((self.HOST, self.PORT))
+
+                print(f"Connected to server {self.HOST}")
+                break
+            except ConnectionRefusedError:
+                print('No connection established. Retrying in 3 seconds...')
+                time.sleep(3)
+        
     
     def message_listener(self, message):
 
@@ -54,9 +64,10 @@ class EthernetClient(Module):
 
         try:
             self.socket.sendall(data_bytes)
-        except socket.error:
+        except (BrokenPipeError, ConnectionResetError):
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
+            self.connect_to_server()
 
     # receive
     def run(self):
@@ -90,9 +101,10 @@ class EthernetClient(Module):
                 else: # LID, SON, IMU
                     pass
 
-        except socket.error:
+        except (BrokenPipeError, ConnectionResetError):
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
+            self.connect_to_server()
         
 if __name__ == "__main__":
     from CANHandler import CANHandler
