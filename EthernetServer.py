@@ -141,7 +141,7 @@ if __name__ == "__main__":
     TestEthernetHandler = TestEthernetHandler()
 
     EthernetClientHandler.start(1)
-    TestEthernetHandler.start(40)
+    TestEthernetHandler.start(1)
         
 
 
