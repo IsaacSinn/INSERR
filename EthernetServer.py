@@ -88,8 +88,7 @@ class EthernetHandler(Module):
                 data_receive = self.conn.recv(5)
 
                 if data_receive:
-                    data = struct.unpack(f"1sL3s", data_receive)
-                    print(data)
+                    data = struct.unpack(f"1s1B3s", data_receive)
                     if data[0].decode() == "X":
                         frame_length = data[1]
                         type = data[2].decode()
@@ -101,9 +100,6 @@ class EthernetHandler(Module):
                 data_frame = self.conn.recv(frame_length)
 
                 if data_frame:
-                    # USB Camera
-                    if type == "CAM":
-                        pass
                     
                     if type == "CAN":
                         data = struct.unpack(f"{frame_length}B", data_frame)
@@ -118,7 +114,7 @@ class EthernetHandler(Module):
                     else: # LID, SON, IMU
                         pass
 
-            except (socket.error, ConnectionAbortedError):
+            except socket.error:
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
@@ -136,8 +132,8 @@ if __name__ == "__main__":
     EthernetHandler = EthernetHandler()
     TestEthernetHandler = TestEthernetHandler()
 
-    EthernetHandler.start(120)
-    TestEthernetHandler.start(1)
+    EthernetHandler.start(200)
+    TestEthernetHandler.start(40)
         
 
 
