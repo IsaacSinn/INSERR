@@ -88,7 +88,7 @@ class EthernetHandler(Module):
                 data_receive = self.conn.recv(5)
 
                 if data_receive:
-                    data = struct.unpack(f"1s1B3s", data_receive)
+                    data = struct.unpack(f"1sL3s", data_receive)
                     print(data)
                     if data[0].decode() == "X":
                         frame_length = data[1]
