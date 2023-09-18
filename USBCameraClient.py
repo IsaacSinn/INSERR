@@ -4,7 +4,7 @@ import struct
 import time
 
 #IP = '169.254.196.165' # Isaac's Laptop
-IP = '192.168.50.198' # Silver Laptop
+IP = '169.254.104.53' # Silver Laptop
 PORT = 8080
 
 def connect_to_server():
