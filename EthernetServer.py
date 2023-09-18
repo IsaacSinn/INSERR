@@ -28,9 +28,7 @@ class EthernetHandler(Module):
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", 50001))
 
-        # TODO: listen is a blocking call, run it inside thread
         self.socket.listen()
-        self.wait_for_client()
 
     # waits for client connection
     def wait_for_client(self):
@@ -121,6 +119,8 @@ class EthernetHandler(Module):
                 self.connected = False
                 self.socket.close()
                 self.wait_for_client()
+        else:
+            self.wait_for_client()
 
 
 
