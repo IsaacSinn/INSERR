@@ -8,7 +8,8 @@ class EthernetClient(Module):
     def __init__(self):
         super().__init__()
 
-        self.HOST = "169.254.196.165"  # The server's hostname or IP address
+        # self.HOST = "169.254.196.165"  # Isaac's Laptop
+        self.HOST = '192.168.50.198' # Silver Laptop 
         self.PORT = 50001  # The port used by the server
 
         self.connect_to_server()
