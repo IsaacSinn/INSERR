@@ -43,7 +43,7 @@ class ThrusterPower(Module):
             Torque = np.cross(ThrusterPosition, ThrusterDirection)
             ThrusterArray = np.concatenate((ThrusterDirection, Torque)).reshape(6,1)
             self.ThrusterMatrix = np.concatenate((self.ThrusterMatrix, ThrusterArray), axis = 1)
-        print(self.ThrusterMatrix[0:6,1:7])
+        # print(self.ThrusterMatrix[0:6,1:7])
 
         for i in range(6):
             message = [0] * 6

@@ -8,7 +8,6 @@ from Joystick import Joystick
 from ControlProfile import ControlProfile
 from ThrusterPower import ThrusterPower
 from Thrusters import Thrusters
-from CANHandler import CANHandler
 from Logger import Logger
 from EthernetServer import EthernetHandler
 from USBCameraServer import *
