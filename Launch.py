@@ -11,6 +11,7 @@ from Thrusters import Thrusters
 from CANHandler import CANHandler
 from Logger import Logger
 from EthernetServer import EthernetHandler
+from USBCameraServer import *
 import os
 
 # allow pygame to not be in focus and still works
@@ -46,6 +47,7 @@ mm.register(
 
 try:
     mm.start_all()
+    USBCameraServer()
     pygame = pygs.get_pygame()
 
     run = True

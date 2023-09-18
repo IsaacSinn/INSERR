@@ -1,4 +1,3 @@
-# echo-client.py
 import time
 import socket
 import struct

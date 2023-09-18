@@ -74,7 +74,7 @@ class EthernetHandler(Module):
         if self.connected:
             try:
                 self.conn.sendall(data_bytes)
-            except (socket.error, ConnectionAbortedError):
+            except (ConnectionResetError, ConnectionAbortedError):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
@@ -114,7 +114,7 @@ class EthernetHandler(Module):
                     else: # LID, SON, IMU
                         pass
 
-            except (socket.error, ConnectionAbortedError):
+            except (ConnectionResetError, ConnectionAbortedError):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
@@ -133,10 +133,7 @@ if __name__ == "__main__":
     TestEthernetHandler = TestEthernetHandler()
 
     EthernetHandler.start(200)
-    TestEthernetHandler.start(100)
-
-    from USBCameraServer import *
-    USBCameraServer()
+    TestEthernetHandler.start(10)
         
 
 
