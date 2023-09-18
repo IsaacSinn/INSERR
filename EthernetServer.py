@@ -137,6 +137,9 @@ if __name__ == "__main__":
 
     EthernetHandler.start(200)
     TestEthernetHandler.start(10)
+
+    from USBCameraServer import *
+    USBCameraServer()
         
 
 
