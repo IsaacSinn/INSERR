@@ -49,9 +49,9 @@ class USBCameraHandler(Module):
                     # Decode the MJPEG data and convert it to a BGR image
                     frame = cv.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv.IMREAD_COLOR)
 
-                    pub.sendMesage("ethernet.usbcam", message = {"data": frame})
+                    pub.sendMessage("ethernet.usbcam", message = {"data": frame})
             
-            except (socket.error, ConnectionResetError, ConnectionAbortedError):
+            except socket.error:
                 self.connected = False
                 self.socket.close()
                 print(f"USB Disconnected from {self.addr}")
@@ -67,11 +67,12 @@ class USBCameraDisplay(Module):
     
     def message_listener(self, message):
         cv.imshow('frame', message["data"])
+        k = cv.waitKey(1)
 
 
 if __name__ == "__main__":
     USBCameraHandler = USBCameraHandler()
-    USBCameraDisplay = USBCameraHandler()
+    USBCameraDisplay = USBCameraDisplay()
 
     USBCameraHandler.start(80)
     USBCameraDisplay.start(1)
