@@ -1,14 +1,12 @@
 import socket
 import struct
-import threading
-import queue
 import numpy as np
-import cv2 # pip install opencv-python
+import cv2 as cv # pip install opencv-python
 from ModuleBase import Module
 from ModuleBase import ModuleManager
 from pubsub import pub
 
-PORT = 8080
+
 
 class USBCameraHandler(Module):
     def __init__(self):
@@ -17,20 +15,18 @@ class USBCameraHandler(Module):
         self.conn = None
         self.addr = None
         self.connected = False
+        self.PORT = 8080
 
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.socket.bind(("", PORT))
+        self.socket.bind(("", self.PORT))
         self.socket.listen()
-        self.wait_for_client()
     
     # waits for client connection
     def wait_for_client(self):
-        while True:
-            self.conn, self.addr = self.socket.accept()
-            self.connected = True
-            print(f"USB Connected {self.addr}")
-            break
+        self.conn, self.addr = self.socket.accept()
+        self.connected = True
+        print(f"USB Connected {self.addr}")
     
     # receives camera frame and publish it out
     def run(self):
@@ -51,13 +47,32 @@ class USBCameraHandler(Module):
                         frame_data += data
 
                     # Decode the MJPEG data and convert it to a BGR image
-                    frame = cv2.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv2.IMREAD_COLOR)
+                    frame = cv.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv.IMREAD_COLOR)
 
-                    pub.sendMesage("usb")
+                    pub.sendMesage("ethernet.usbcam", message = {"data": frame})
             
-            except socket.error:
-                print(f"USB Disconnected from {self.addr}")
+            except (socket.error, ConnectionResetError, ConnectionAbortedError):
                 self.connected = False
                 self.socket.close()
+                print(f"USB Disconnected from {self.addr}")
                 self.wait_for_client()
+        else:
+            self.wait_for_client()
+
+class USBCameraDisplay(Module):
+    def __init__ (self):
+        super().__init__()
+
+        pub.subscribe(self.message_listener, "ethernet.usbcam")
+    
+    def message_listener(self, message):
+        cv.imshow('frame', message["data"])
+
+
+if __name__ == "__main__":
+    USBCameraHandler = USBCameraHandler()
+    USBCameraDisplay = USBCameraHandler()
+
+    USBCameraHandler.start(80)
+    USBCameraDisplay.start(1)
 

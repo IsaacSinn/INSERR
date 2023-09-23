@@ -47,6 +47,7 @@ def USBCameraClient(client_socket):
         try:
             # Send the frame data through the socket
             client_socket.sendall(struct.pack('<L', len(frame_data)) + frame_data)
+            print(f"frame data: {frame_data}, frame")
         except (BrokenPipeError, ConnectionResetError):
             print('Connection lost. Reconnecting...')
             client_socket.close()

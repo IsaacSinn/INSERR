@@ -8,8 +8,8 @@ class EthernetClient(Module):
     def __init__(self):
         super().__init__()
 
-        # self.HOST = "169.254.196.165"  # Isaac's Laptop
-        self.HOST = '169.254.104.53' # Silver Laptop 
+        self.HOST = "169.254.196.165"  # Isaac's Laptop
+        # self.HOST = '169.254.104.53' # Silver Laptop 
         self.PORT = 50001  # The port used by the server
 
         self.connect_to_server()
@@ -58,7 +58,6 @@ class EthernetClient(Module):
             data_bytes = struct.pack("1s1B3s", START, len(time_byte), type)
             data_bytes = data_bytes + time_byte
 
-        
         else: # LID, SON, IMU
             pass
 
