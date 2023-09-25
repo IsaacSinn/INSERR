@@ -20,7 +20,8 @@ class USBCameraHandler(Module):
 
 
         if not self.check_process():
-            raise ("USB Port is in use, please close any other programs using this port and restart the program")
+            raise Exception("USB Port is in use, please close any other programs using this port and restart the program \
+                   Please use this command to check what program is using this port: netstat -ano | findstr :<port_number>")
         
         self.init_socket()
 
