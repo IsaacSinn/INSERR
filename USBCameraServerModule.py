@@ -17,13 +17,19 @@ class USBCameraHandler(Module):
         self.connected = False
         self.PORT = 8080
 
+        self.init_socket()
+    
+    # initializes socket
+    def init_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", self.PORT))
         self.socket.listen()
-    
+
     # waits for client connection
     def wait_for_client(self):
+        if not self.socket:
+            self.init_socket()
         self.conn, self.addr = self.socket.accept()
         self.connected = True
         print(f"USB Connected {self.addr}")
@@ -52,7 +58,6 @@ class USBCameraHandler(Module):
                 pub.sendMessage("ethernet.usbcam", message = {"data": frame})
             else:
                 self.connected = False
-                self.conn.close()
                 self.socket.close()
                 print(f"USB Disconnected from {self.addr}")
                 pub.sendMessage("ethernet.usbcam", message = {"data": 0})

@@ -31,6 +31,7 @@ class USBCamera(Module):
         while True:
             try:
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                 self.socket.connect((self.HOST, self.PORT))
 
                 print(f"Connected to USB server {self.HOST}")
