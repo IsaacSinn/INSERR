@@ -63,7 +63,7 @@ class EthernetClient(Module):
 
         try:
             self.socket.sendall(data_bytes)
-        except (BrokenPipeError, ConnectionResetError):
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
             self.connect_to_server()
@@ -100,7 +100,7 @@ class EthernetClient(Module):
                 else: # LID, SON, IMU
                     pass
 
-        except (BrokenPipeError, ConnectionResetError):
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
             self.socket.close()
             print(f"Disconnected from {self.HOST}")
             self.connect_to_server()

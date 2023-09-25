@@ -13,7 +13,6 @@ class USBCamera(Module):
         # self.HOST = '169.254.104.53' # Silver Laptop 
         self.PORT = 8080
         self.connected = False
-        self.connect_to_server()
 
         self.cam = cv.VideoCapture(cam_num, cv.CAP_V4L2)
 
@@ -25,6 +24,8 @@ class USBCamera(Module):
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, v_width)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, v_height)
         self.cam.set(cv.CAP_PROP_FPS, v_fps)
+
+        self.connect_to_server()
     
     def connect_to_server(self):
         while True:
@@ -46,17 +47,20 @@ class USBCamera(Module):
         # Convert the frame to a byte array
         frame_data = image.tobytes()
         
-        if self.connected:
+        if self.connected and self.socket is not None:
         
             try:
                 # Send the frame data through the socket
                 self.socket.sendall(struct.pack('<L', len(frame_data)) + frame_data)
                 # print(f"frame data: {frame_data}, frame")
-            except (BrokenPipeError, ConnectionResetError):
+
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 print('USB Server connection lost. Reconnecting...')
                 self.socket.close()
                 self.connected = False
                 self.socket = self.connect_to_server()
+        else:
+            self.connect_to_server()
 
 
 

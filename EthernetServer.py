@@ -74,7 +74,7 @@ class EthernetHandler(Module):
         if self.connected:
             try:
                 self.conn.sendall(data_bytes)
-            except (ConnectionResetError, ConnectionAbortedError):
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
@@ -114,7 +114,7 @@ class EthernetHandler(Module):
                     else: # LID, SON, IMU
                         pass
 
-            except (ConnectionResetError, ConnectionAbortedError):
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
