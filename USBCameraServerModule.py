@@ -25,9 +25,11 @@ class USBCameraHandler(Module):
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", self.PORT))
         self.socket.listen()
+        print("socket listening ")
 
     # waits for client connection
     def wait_for_client(self):
+        print(self.socket)
         if not self.socket:
             self.init_socket()
         self.conn, self.addr = self.socket.accept()
@@ -59,16 +61,12 @@ class USBCameraHandler(Module):
             else:
                 self.connected = False
                 self.socket.close()
+                self.socket = None
                 print(f"USB Disconnected from {self.addr}")
                 pub.sendMessage("ethernet.usbcam", message = {"data": 0})
                 cv.destroyAllWindows()
                 self.wait_for_client()
             
-            # except socket.error:
-            #     self.connected = False
-            #     self.socket.close()
-            #     print(f"USB Disconnected from {self.addr}")
-            #     self.wait_for_client()
         else:
             self.wait_for_client()
 

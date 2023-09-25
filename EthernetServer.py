@@ -132,15 +132,20 @@ class TestEthernetHandler(Module):
         pub.sendMessage("ethernet.send", message = {"type": "TST", "address": 0x15, "data": [0x20, 0x10, 0x00]})
 
 if __name__ == "__main__":
+    from USBCameraServerModule import USBCameraHandler, USBCameraDisplay
+    
     EthernetHandler = EthernetHandler()
     TestEthernetHandler = TestEthernetHandler()
+    USBCameraHandler = USBCameraHandler()
+    USBCameraDisplay = USBCameraDisplay()
 
     EthernetHandler.start(200)
-    TestEthernetHandler.start(1)
+    TestEthernetHandler.start(10)
+    USBCameraHandler.start(80)
+    USBCameraDisplay.start(1)
+    
 
-    from USBCameraServer import *
-    USBCameraServer()
-        
+
 
 
 
