@@ -14,6 +14,7 @@ from pubsub import pub
 import socket
 import struct
 import time
+import psutil
 
 class EthernetHandler(Module):
     def __init__(self):
@@ -23,20 +24,39 @@ class EthernetHandler(Module):
         self.conn = None
         self.addr = None
         self.connected = False
+        self.PORT = 226
 
+        if not self.check_process():
+            raise ("Control Program Port is in use, please close any other programs using this port and restart the program")
+
+        self.init_socket()
+    
+
+    # checks if any process is using PORT
+    def check_process(self):
+        for proc in psutil.process_iter(['pid', 'name', 'connections']):
+            for conn in proc.info['connections']:
+                if conn.laddr.port == self.PORT:
+                    return False
+            
+        return True
+    
+    # initializes socket
+    def init_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        self.socket.bind(("", 50001))
-
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind(("", self.PORT))
         self.socket.listen()
+
 
     # waits for client connection
     def wait_for_client(self):
-        while True:
-            self.conn, self.addr = self.socket.accept()
-            self.connected = True
-            print(f"Connected to {self.addr}")
-            break
+        if not self.socket:
+            self.init_socket()
+        self.conn, self.addr = self.socket.accept()
+        self.connected = True
+        print(f"Connected to {self.addr}")
     
     # callback function for "ethernet.send" pubsub channel
     def message_listener(self, message):
@@ -118,6 +138,7 @@ class EthernetHandler(Module):
                 print(f"Disconnect from {self.addr}")
                 self.connected = False
                 self.socket.close()
+                self.socket = None
                 self.wait_for_client()
         else:
             self.wait_for_client()
@@ -133,7 +154,7 @@ class TestEthernetHandler(Module):
 
 if __name__ == "__main__":
     from USBCameraServerModule import USBCameraHandler, USBCameraDisplay
-    
+
     EthernetHandler = EthernetHandler()
     TestEthernetHandler = TestEthernetHandler()
     USBCameraHandler = USBCameraHandler()

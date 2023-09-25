@@ -5,6 +5,7 @@ import cv2 as cv # pip install opencv-python
 from ModuleBase import Module
 from ModuleBase import ModuleManager
 from pubsub import pub
+import psutil
 
 
 
@@ -17,19 +18,31 @@ class USBCameraHandler(Module):
         self.connected = False
         self.PORT = 8080
 
+
+        if not self.check_process():
+            raise ("USB Port is in use, please close any other programs using this port and restart the program")
+        
         self.init_socket()
+
+    # checks if any process is using PORT
+    def check_process(self):
+        for proc in psutil.process_iter(['pid', 'name', 'connections']):
+            for conn in proc.info['connections']:
+                if conn.laddr.port == self.PORT:
+                    return False
+            
+        return True
     
     # initializes socket
     def init_socket(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         self.socket.bind(("", self.PORT))
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.listen()
-        print("socket listening ")
 
     # waits for client connection
     def wait_for_client(self):
-        print(self.socket)
         if not self.socket:
             self.init_socket()
         self.conn, self.addr = self.socket.accept()
@@ -39,7 +52,6 @@ class USBCameraHandler(Module):
     # receives camera frame and publish it out
     def run(self):
         if self.connected:
-            # try:
 
             # Receive the frame size from the client
             frame_size_data = self.conn.recv(struct.calcsize('<L'))
