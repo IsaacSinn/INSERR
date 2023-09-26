@@ -162,7 +162,7 @@ if __name__ == "__main__":
     USBCameraDisplay = USBCameraDisplay()
 
     EthernetHandler.start(200)
-    TestEthernetHandler.start(10)
+    TestEthernetHandler.start(100)
     USBCameraHandler.start(80)
     USBCameraDisplay.start(1)
     

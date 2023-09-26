@@ -10,8 +10,8 @@ from ThrusterPower import ThrusterPower
 from Thrusters import Thrusters
 from Logger import Logger
 from EthernetServer import EthernetHandler
-from USBCameraServer import *
 from EthernetServer import TestEthernetHandler
+from USBCameraServerModule import USBCameraHandler, USBCameraDisplay
 import os
 
 # allow pygame to not be in focus and still works
@@ -30,8 +30,9 @@ ControlProfileD = ControlProfile(30, 50, "D")
 ThrusterPower = ThrusterPower()
 Thrusters = Thrusters()
 EthernetHandler = EthernetHandler()
+USBCameraHandler = USBCameraHandler()
+USBCameraDisplay = USBCameraDisplay()
 Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS\
-TestEthernetHandler = TestEthernetHandler()
     
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
@@ -44,12 +45,12 @@ mm.register(
             (ThrusterPower, 60),
             (Thrusters, 3),
             (EthernetHandler, 120),
-            (TestEthernetHandler, 1)
+            (USBCameraHandler, 80),
+            (USBCameraDisplay, 1),
 )
 
 try:
     mm.start_all()
-    USBCameraServer()
     pygame = pygs.get_pygame()
 
     run = True
