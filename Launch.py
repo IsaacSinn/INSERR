@@ -11,16 +11,15 @@ from Thrusters import Thrusters
 from Logger import Logger
 from EthernetServer import EthernetHandler
 from EthernetServer import TestEthernetHandler
-from USBCameraServerModule import USBCameraHandler, USBCameraDisplay
+from USBCameraServer import USBCameraHandler, USBCameraDisplay
 import os
 
 # allow pygame to not be in focus and still works
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 
 mm = ModuleManager()
-pygs = PyGameServices()
-pygs.start(100)
 
+pygs = PyGameServices()
 GUI = GUI()
 Joystick = Joystick()
 ControlProfileA = ControlProfile(100, 30, "A")
@@ -32,11 +31,13 @@ Thrusters = Thrusters()
 EthernetHandler = EthernetHandler()
 USBCameraHandler = USBCameraHandler()
 USBCameraDisplay = USBCameraDisplay()
-Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS\
-    
+Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
+
+pygs.start(100)
+
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
-            (GUI, 60),
+            # (GUI, 60),
             (Joystick, 60),
             (ControlProfileA, 1),
             (ControlProfileB, 1),

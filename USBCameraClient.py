@@ -1,73 +1,70 @@
-import cv2
-import socket
+import cv2 as cv
 import struct
-import time
+import socket
+import time 
+from ModuleBase import Module
+from pubsub import pub
 
-#IP = '169.254.196.165' # Isaac's Laptop
-IP = '169.254.104.53' # Silver Laptop
-PORT = 8080
+class USBCamera(Module):
+    def __init__(self, cam_num, cam_format, v_width, v_height, v_fps):
+        super().__init__()
 
-def connect_to_server():
-    # Create a socket and connect to the server
-    client_socket = socket.socket()
-    while True:
-        try:
-            client_socket.connect((IP, PORT))
-            print('Connection established')
-            time.sleep(1)
-            break
-        except ConnectionRefusedError:
-            print('No connection established. Retrying in 3 seconds...')
-            time.sleep(3)
-    return client_socket
+        # self.HOST = "169.254.196.165"  # Isaac's Laptop
+        self.HOST = '169.254.104.53' # Silver Laptop 
+        self.PORT = 8080
+        self.connected = False
 
-def camera(cam_num, cam_format, v_width, v_height, v_fps):
-    # Start the camera
-    cam = cv2.VideoCapture(cam_num, cv2.CAP_V4L2)
+        self.cam = cv.VideoCapture(cam_num, cv.CAP_V4L2)
 
-    # Set the video format
-    cam.set(cv2.CAP_PROP_CONVERT_RGB, 0)
-    fourcc = cv2.VideoWriter_fourcc(*cam_format)
-    cam.set(cv2.CAP_PROP_FOURCC, fourcc)
-    #cam.set(cv2.CAP_PROP_HW_ACCELERATION, cv2.VIDEO_ACCELERATION_ANY)
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, v_width)
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, v_height)
-    cam.set(cv2.CAP_PROP_FPS, v_fps)
+        # Set the video format
+        self.cam.set(cv.CAP_PROP_CONVERT_RGB, 0)
+        fourcc = cv.VideoWriter_fourcc(*cam_format)
+        self.cam.set(cv.CAP_PROP_FOURCC, fourcc)
+        #cam.set(cv.CAP_PROP_HW_ACCELERATION, cv.VIDEO_ACCELERATION_ANY)
+        self.cam.set(cv.CAP_PROP_FRAME_WIDTH, v_width)
+        self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, v_height)
+        self.cam.set(cv.CAP_PROP_FPS, v_fps)
 
-    return cam
+        self.connect_to_server()
+    
+    def connect_to_server(self):
+        while True:
+            try:
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.socket.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                self.socket.connect((self.HOST, self.PORT))
 
+                print(f"Connected to USB server {self.HOST}")
+                self.connected = True
+                break
+            except ConnectionRefusedError:
+                print('No USB server connection established. Retrying in 3 seconds...')
+                time.sleep(3)
+    
 
-def USBCameraClient(client_socket):
-    while True:
+    def run(self):
         # Read the frame
-        ret, image = cam0.read()
+        ret, image = self.cam.read()
         # Convert the frame to a byte array
         frame_data = image.tobytes()
         
-        try:
-            # Send the frame data through the socket
-            client_socket.sendall(struct.pack('<L', len(frame_data)) + frame_data)
-            print(f"frame data: {frame_data}, frame")
-        except (BrokenPipeError, ConnectionResetError):
-            print('Connection lost. Reconnecting...')
-            client_socket.close()
-            client_socket = connect_to_server()
+        if self.connected and self.socket is not None:
         
-        k = cv2.waitKey(1)
-        if k == 27:
-            break
+            try:
+                # Send the frame data through the socket
+                self.socket.sendall(struct.pack('<L', len(frame_data)) + frame_data)
+                # print(f"frame data: {frame_data}, frame")
 
-    # Release everything if job is finished
-    cam0.release()
-    client_socket.close()
-    cv2.destroyAllWindows()
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                print('USB Server connection lost. Reconnecting...')
+                self.socket.close()
+                self.connected = False
+                self.socket = self.connect_to_server()
+        else:
+            self.connect_to_server()
 
-def start():
-    global cam0
-    # Connect to the server
-    client_socket = connect_to_server()
 
-    # Start camera
-    cam0 = camera(0, 'MJPG', 1280, 720, 30)
 
-    USBCameraClient(client_socket)
+if __name__ == "__main__":
+    USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
+    USBCamera.start(60)
