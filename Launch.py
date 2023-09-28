@@ -20,6 +20,8 @@ os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
 mm = ModuleManager()
 
 pygs = PyGameServices()
+pygs.start(100)
+
 GUI = GUI()
 Joystick = Joystick()
 ControlProfileA = ControlProfile(100, 30, "A")
@@ -33,7 +35,7 @@ USBCameraHandler = USBCameraHandler()
 USBCameraDisplay = USBCameraDisplay()
 Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER, TOPICS
 
-pygs.start(100)
+
 
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(

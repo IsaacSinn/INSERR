@@ -116,7 +116,7 @@ if __name__ == "__main__":
     # CANHandler = CANHandler(250000)
 
     EthernetClient.start(200)
-    USBCamera.start(60)
+    USBCamera.start(15)
     # CANHandler.start(30)
 
 
