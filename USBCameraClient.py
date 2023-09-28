@@ -20,7 +20,7 @@ class USBCamera(Module):
         self.cam.set(cv.CAP_PROP_CONVERT_RGB, 0)
         fourcc = cv.VideoWriter_fourcc(*cam_format)
         self.cam.set(cv.CAP_PROP_FOURCC, fourcc)
-        cam.set(cv.CAP_PROP_HW_ACCELERATION, cv.VIDEO_ACCELERATION_ANY)
+        self.cam.set(cv.CAP_PROP_HW_ACCELERATION, cv.VIDEO_ACCELERATION_ANY)
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, v_width)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, v_height)
         self.cam.set(cv.CAP_PROP_FPS, v_fps)
