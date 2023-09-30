@@ -21,7 +21,10 @@ class PyGameServices(Module):
     @classmethod
     def run(cls):
         # if cls.screen: # run if screen initialized
-        #     pygame.display.flip()
+        #     print("screen init")
+        #     for event in pygame.event.get(pump=True):
+        #         if event.type == pygame.QUIT:
+        #             pygame.quit()
 
         pygame.event.pump()
 
