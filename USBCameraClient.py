@@ -9,8 +9,8 @@ class USBCamera(Module):
     def __init__(self, cam_num, cam_format, v_width, v_height, v_fps):
         super().__init__()
 
-        # self.HOST = "169.254.196.165"  # Isaac's Laptop
-        self.HOST = '169.254.104.53' # Silver Laptop 
+        self.HOST = "169.254.196.165"  # Isaac's Laptop
+        # self.HOST = '169.254.104.53' # Silver Laptop 
         self.PORT = 8080
         self.connected = False
 

@@ -8,8 +8,8 @@ class EthernetClient(Module):
     def __init__(self):
         super().__init__()
 
-        # self.HOST = "169.254.196.165"  # Isaac's Laptop
-        self.HOST = '169.254.104.53' # Silver Laptop 
+        self.HOST = "169.254.196.165"  # Isaac's Laptop
+        # self.HOST = '169.254.104.53' # Silver Laptop 
         self.PORT = 226  # The port used by the server
 
         self.connect_to_server()
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
     # CANHandler = CANHandler(250000)
 
-    EthernetClient.start(200)
-    USBCamera.start(15)
+    EthernetClient.start(120)
+    USBCamera.start(60)
     # CANHandler.start(30)
 
 

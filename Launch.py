@@ -22,8 +22,8 @@ mm = ModuleManager()
 pygs = PyGameServices()
 pygs.start(100)
 
-GUI = GUI()
-Joystick = Joystick()
+# GUI = GUI()
+# Joystick = Joystick()
 ControlProfileA = ControlProfile(100, 30, "A")
 ControlProfileB = ControlProfile(70, 50, "B")
 ControlProfileC = ControlProfile(50, 50, "C")
@@ -40,7 +40,7 @@ Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
             # (GUI, 60),
-            (Joystick, 60),
+            # (Joystick, 60),
             (ControlProfileA, 1),
             (ControlProfileB, 1),
             (ControlProfileC, 1),
@@ -48,7 +48,7 @@ mm.register(
             (ThrusterPower, 60),
             (Thrusters, 3),
             (EthernetHandler, 120),
-            (USBCameraHandler, 80),
+            (USBCameraHandler, 120),
             (USBCameraDisplay, 1),
 )
 
