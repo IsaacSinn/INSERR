@@ -25,7 +25,7 @@ pygs.start(100)
 pygame = pygs.get_pygame()
 
 GUI = GUI()
-# Joystick = Joystick()
+Joystick = Joystick()
 ControlProfileA = ControlProfile(100, 30, "A")
 ControlProfileB = ControlProfile(70, 50, "B")
 ControlProfileC = ControlProfile(50, 50, "C")
@@ -43,7 +43,7 @@ Logger = Logger(False, False, None, "ethernet.send") # FILE, PRINT, RATE_LIMITER
 # REGISTERING MODULES (INSTANCE, REFRESH PER SECOND)
 mm.register(
             (GUI, 60),
-            # (Joystick, 60),
+            (Joystick, 60),
             (ControlProfileA, 1),
             (ControlProfileB, 1),
             (ControlProfileC, 1),
@@ -53,16 +53,17 @@ mm.register(
             (EthernetHandler, 120),
             (USBCameraHandler, 120),
             (USBCameraDisplay, 1),
-            (TestEthernetHandler, 15),
+            # (TestEthernetHandler, 15),
 )
 
 try:
+    # main thread
 
     mm.start_all()
 
     run = True
     while run:
-        for event in pygame.event.get():
+        for event in pygame.event.get(): # pygame event loop must run in the main thread
             if event.type == pygame.QUIT:
                 run = False
         time.sleep(0.015)
