@@ -9,7 +9,7 @@ class EthernetClient(Module):
         super().__init__()
 
         # self.HOST = "169.254.196.165"  # Isaac's Laptop
-        self.HOST = '169.254.104.53' # Silver Laptop 
+        self.HOST = '169.254.243.121' # Silver Laptop 
         self.PORT = 226  # The port used by the server
 
         self.connect_to_server()
@@ -113,18 +113,18 @@ if __name__ == "__main__":
 
     EthernetClient = EthernetClient()
     USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
-    # CANHandler = CANHandler(250000)
+    CANHandler = CANHandler(250000)
 
     EthernetClient.start(120)
     USBCamera.start(60)
-    # CANHandler.start(30)
+    CANHandler.start(30)
 
 
-    # LidarReaderPi = LidarReaderPi()
-    # LidarReaderPi.start(1)
+    LidarReaderPi = LidarReaderPi()
+    LidarReaderPi.start(1)
 
-    # IMUReaderPi = IMUReaderPi()
-    # IMUReaderPi.start(100)
+    IMUReaderPi = IMUReaderPi()
+    IMUReaderPi.start(100)
 
     
     
