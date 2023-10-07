@@ -49,7 +49,7 @@ mm.register(
             (ControlProfileC, 1),
             (ControlProfileD, 1),
             (ThrusterPower, 60),
-            (Thrusters, 3),
+            (Thrusters, 10),
             (EthernetHandler, 120),
             (USBCameraHandler, 120),
             (USBCameraDisplay, 1),

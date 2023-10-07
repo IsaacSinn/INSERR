@@ -8,3 +8,4 @@ pyserial
 at_serial_can
 infi.devicemanager
 psutil
+opencv-python
