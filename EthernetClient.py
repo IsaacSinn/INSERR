@@ -113,11 +113,11 @@ if __name__ == "__main__":
 
     EthernetClient = EthernetClient()
     USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
-    # CANHandler = CANHandler(250000)
+    CANHandler = CANHandler(250000)
 
     EthernetClient.start(120)
     USBCamera.start(60)
-    # CANHandler.start(30)
+    CANHandler.start(30)
 
 
     # LidarReaderPi = LidarReaderPi()
