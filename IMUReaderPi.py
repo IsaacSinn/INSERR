@@ -19,6 +19,7 @@ class IMUReaderPi(Module):
 
         self.file = open('./IMUData/IMU_Data ' + localTime + '.txt', 'w')
         self.file.write("Temp (c), Acc\n")
+        print("IMU Reading")
     
     def temperature(self):
         result = self.sensor.temperature
@@ -30,5 +31,16 @@ class IMUReaderPi(Module):
         return result
     
     def run(self):
-        self.file.write("(" + str(self.temperature()) +")\t" + str(self.sensor.acceleration) + "\t" + str(self.sensor.magnetic) +"\t" + str(self.sensor.gyro)+ "\t" + str(self.sensor.euler)+"\t" + str(self.sensor.quaternion)+"\t" + str(self.sensor.linear_acceleration)+"\t" + str(self.sensor.gravity)+ "\t(" +  str(time.time()) +")\n")
-        
+        sys, gyro, accel, mag = self.sensor.calibration_status
+        print("calibration status: {}".format(self.sensor.calibration_status))
+        self.file.write("(" + str(self.temperature()) +")\t" + \
+                        str(self.sensor.acceleration) + "\t" + \
+                        str(self.sensor.magnetic) +"\t" + \
+                        str(self.sensor.gyro)+ "\t" + \
+                        str(self.sensor.euler)+"\t" + \
+                        str(self.sensor.quaternion)+"\t" + \
+                        str(self.sensor.linear_acceleration)+"\t" + \
+                        str(self.sensor.gravity)+ "\t("+ \
+                        str(sys)+",\t"+str(gyro)+",\t"+str(accel)+",\t"+str(mag)+ ")\t(" +  \
+                        str(time.time()) +")\t(\n"
+                        )

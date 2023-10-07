@@ -21,7 +21,7 @@ class LidarReaderPi(Module):
     def run(self):
     
         try:
-            print("lidar measuring")
+            print("Lidar Measuring")
             for measurment in self.lidar.iter_measures():
                 line = '\t'.join(str(v) for v in measurment)
                 self.outfile.write(line + "\t" + str(time.time()) + '\n')
