@@ -1,4 +1,4 @@
-pygame
+#pygame
 pypubsub
 pyyaml
 numpy
@@ -6,6 +6,6 @@ argparse
 python-can
 pyserial
 at_serial_can
-infi.devicemanager
+#infi.devicemanager
 psutil
-opencv-python
+#opencv-python
