@@ -62,14 +62,17 @@ class GUI(Module):
         self.gripper_closed = self.pygame.transform.scale(gripper_closed,(889,500))
         gripper_full_opened =self.pygame.image.load(r".\GUI Assets\Gripper fully opened.png")
         self.gripper_full_opened = self.pygame.transform.scale(gripper_full_opened,(889,500))
-        rov_upview = self.pygame.image.load(r".\GUI Assets\otodus_bottom_view.png")
+        rov_upview = self.pygame.image.load(r".\GUI Assets\INSERR MK1 Top View For GUI.png")
         self.rov_upview = self.pygame.transform.scale(rov_upview,(400,400))
 
         self.background = self.pygame.Surface(self.mode)
         self.background.fill(self.pygame.Color(self.turquoise))
-        self.comic_font_large = self.pygame.font.SysFont("Comic Sans MS", 160)
-        self.comic_font_medium = self.pygame.font.SysFont("Comic Sans MS", 80)
-        self.comic_font_small = self.pygame.font.SysFont("Comic Sans MS", 40)
+        self.comic_font_large = self.pygame.font.Font(r".\GUI Assets\Roboto-Regular.ttf",160)
+        self.comic_font_medium = self.pygame.font.Font(r".\GUI Assets\Roboto-Regular.ttf",80)
+        self.comic_font_small = self.pygame.font.Font(r".\GUI Assets\Roboto-Regular.ttf",40)
+        #self.comic_font_large = self.pygame.font.SysFont("Comic Sans MS", 160)
+        #self.comic_font_medium = self.pygame.font.SysFont("Comic Sans MS", 80)
+        #self.comic_font_small = self.pygame.font.SysFont("Comic Sans MS", 40)
         self.active_tools = ("gamepad.gripper", "gamepad.EM1", "gamepad.EM2", "gamepad.erector")
 
         # pubsub init
@@ -213,7 +216,7 @@ class GUI(Module):
         self.rect(coloring, (1250, 740, 170, 170))
         self.profile_labeler = self.comic_font_small.render("Current Profile:",False, (0,0,0))
         self.profile_info = self.comic_font_large.render(str(self.profile), False, (0,0,0))
-        self.screen.blit(self.profile_info,(1280,700))
+        self.screen.blit(self.profile_info,(1280,720))
         self.screen.blit(self.profile_labeler,(1230,660))
 
     def inversion(self):
@@ -232,6 +235,21 @@ class GUI(Module):
             self.TFL, self.TFR, self.TBL, self.TBR, self.TUF, self.TUB = (self.thruster)
         if len(self.thruster) == 1:
             self.TFL, self.TFR, self.TBL, self.TBR, self.TUF, self.TUB = (self.thruster[0])
+
+    def thruster_data_output(self):
+        self.r_val = 3
+        self.TFL_labeller = self.comic_font_small.render(("FL  " + str(round(self.TFL,self.r_val))),False, (0,0,0))
+        self.TFR_labeller = self.comic_font_small.render(("FR  " + str(round(self.TFR,self.r_val))),False, (0,0,0))
+        self.TBL_labeller = self.comic_font_small.render(("BL  " + str(round(self.TBL,self.r_val))),False, (0,0,0))
+        self.TBR_labeller = self.comic_font_small.render(("BR  " + str(round(self.TBR,self.r_val))),False, (0,0,0))
+        self.TUF_labeller = self.comic_font_small.render(("UF  " + str(round(self.TUF,self.r_val))),False, (0,0,0))
+        self.TUB_labeller = self.comic_font_small.render(("UB  " + str(round(self.TUB,self.r_val))),False, (0,0,0))
+        self.screen.blit(self.TFL_labeller,(750,500))
+        self.screen.blit(self.TFR_labeller,(750,550))
+        self.screen.blit(self.TBL_labeller,(750,650))
+        self.screen.blit(self.TBR_labeller,(750,700))
+        self.screen.blit(self.TUF_labeller,(750,800))
+        self.screen.blit(self.TUB_labeller,(750,850))
 
 
     # pubsub handler
@@ -282,6 +300,7 @@ class GUI(Module):
         self.down_thrust(self.yellow, self.blue, self.TUB)
         self.profile_label()
         self.inversion()
+        self.thruster_data_output()
         #print(self.TUF)
         
         self.pygame.display.flip()
