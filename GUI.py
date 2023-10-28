@@ -237,6 +237,9 @@ class GUI(Module):
             self.TFL, self.TFR, self.TBL, self.TBR, self.TUF, self.TUB = (self.thruster[0])
 
     def thruster_data_output(self):
+        #note to self, you swapped x and y by accident thrust_x is the y-axis and vice versa
+        self.thrust_x = 60
+        self.thrust_y = 950
         self.r_val = 3
         self.TFL_labeller = self.comic_font_small.render(("FL  " + str(round(self.TFL,self.r_val))),False, (0,0,0))
         self.TFR_labeller = self.comic_font_small.render(("FR  " + str(round(self.TFR,self.r_val))),False, (0,0,0))
@@ -244,12 +247,26 @@ class GUI(Module):
         self.TBR_labeller = self.comic_font_small.render(("BR  " + str(round(self.TBR,self.r_val))),False, (0,0,0))
         self.TUF_labeller = self.comic_font_small.render(("UF  " + str(round(self.TUF,self.r_val))),False, (0,0,0))
         self.TUB_labeller = self.comic_font_small.render(("UB  " + str(round(self.TUB,self.r_val))),False, (0,0,0))
-        self.screen.blit(self.TFL_labeller,(750,500))
-        self.screen.blit(self.TFR_labeller,(750,550))
-        self.screen.blit(self.TBL_labeller,(750,650))
-        self.screen.blit(self.TBR_labeller,(750,700))
-        self.screen.blit(self.TUF_labeller,(750,800))
-        self.screen.blit(self.TUB_labeller,(750,850))
+        self.screen.blit(self.TFL_labeller,(self.thrust_y,self.thrust_x))
+        self.screen.blit(self.TFR_labeller,(self.thrust_y,self.thrust_x+50))
+        self.screen.blit(self.TBL_labeller,(self.thrust_y,self.thrust_x + 150))
+        self.screen.blit(self.TBR_labeller,(self.thrust_y,self.thrust_x + 200))
+        self.screen.blit(self.TUF_labeller,(self.thrust_y,self.thrust_x + 300))
+        self.screen.blit(self.TUB_labeller,(self.thrust_y,self.thrust_x + 350))
+
+    def shoulder_buttons_output(self, BL, BR):
+        self.BLT_labeller = self.comic_font_small.render(("Left Shoulder  " + str(round(BL,self.r_val))),False, (0,0,0))
+        self.BRT_labeller = self.comic_font_small.render(("Right Shoulder " + str(round(BR,self.r_val))),False, (0,0,0))
+        self.screen.blit(self.BLT_labeller,(550,600))
+        self.screen.blit(self.BRT_labeller,(550,650))
+
+    def joystick_output(self, LLR, LUD, RLR, RUD):
+        self.l_labeller = self.comic_font_small.render(("||Left Joystick ||    X: " + str(round(LLR,self.r_val))+ "    Y: " + str(round(LUD,self.r_val))),False, (0,0,0))
+        self.r_labeller = self.comic_font_small.render(("||Right Joystick||    X: " + str(round(RLR,self.r_val))+  "    Y: " + str(round(RUD,self.r_val))),False, (0,0,0))
+        self.screen.blit(self.l_labeller,(550,750))
+        self.screen.blit(self.r_labeller,(550,800))
+
+
 
 
     # pubsub handler
@@ -301,6 +318,8 @@ class GUI(Module):
         self.profile_label()
         self.inversion()
         self.thruster_data_output()
+        self.shoulder_buttons_output(BL, BR)
+        self.joystick_output(LLR,LUD,RLR,RUD)
         #print(self.TUF)
         
         self.pygame.display.flip()
