@@ -44,13 +44,13 @@ class ThrusterPower(Module):
             ThrusterArray = np.concatenate((ThrusterDirection, Torque)).reshape(6,1)
             self.ThrusterMatrix = np.concatenate((self.ThrusterMatrix, ThrusterArray), axis = 1)
         # print(self.ThrusterMatrix[0:6,1:7])
-
+        
         for i in range(6):
             message = [0] * 6
             message[i] = -1
             self.gamepadScaleConstant(message = {"control_movement": message})
         self.gamepadScaleConstant(message = {"control_movement": [0,0,0,1,0,0]})
-
+        
         pub.subscribe(self.command_movement, "control.movement")
 
     def truncate(self, finalList):

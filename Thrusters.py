@@ -53,6 +53,7 @@ class Thrusters(Module):
                     self.target_power[0][counter] = self.valmap(power, 0, -1, -self.Thrusters[counter]["Deadzone"], -1)
                 else:
                     self.target_power[0][counter] = 0
+            #self.target_power[0][counter] = 0
 
     def run(self):
         rate = self.rate * (1 / self.interval)
@@ -72,7 +73,7 @@ class Thrusters(Module):
                     self.output_power[counter] = int(self.output_power[counter]*32767)
                 else:
                     self.output_power[counter] = int(self.output_power[counter]*32768)
-                
+                print("power", self.output_power[counter])
                 pub.sendMessage("ethernet.send", message = {"type": "CAN", "address": self.Thrusters[counter]["Address"], "data": [32, self.output_power[counter] >> 8 & 0xff, self.output_power[counter] & 0xff]})
                 pub.sendMessage("thrusters.info", message = {"thrusters_output": self.output_power})
 
