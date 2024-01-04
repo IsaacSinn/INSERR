@@ -45,7 +45,7 @@ class EthernetClient(Module):
             else:
                 data = [address1] + [address2] + message["data"]
 
-            format_string = format_string = f"1s1B3s{len(data)}B"
+            format_string = f"1s1B3s{len(data)}B"
 
             data_bytes = struct.pack(format_string, START, len(data), type, *data)
         
@@ -90,6 +90,7 @@ class EthernetClient(Module):
                 if type == "CAN":
                     data = struct.unpack(f"{frame_length}B", data_frame)
                     address, data = data[0], data[1:]
+                    #print("client", address, data)
                     pub.sendMessage("can.send", message = {"address": address, "data": data})
 
                 elif type == "TST":
@@ -115,19 +116,15 @@ if __name__ == "__main__":
     USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
     CANHandler = CANHandler(250000)
 
-    EthernetClient.start(120)
+    EthernetClient.start(120) #120
     USBCamera.start(60)
     CANHandler.start(30)
-
 
     LidarReaderPi = LidarReaderPi()
     LidarReaderPi.start(1)
 
     IMUReaderPi = IMUReaderPi()
     IMUReaderPi.start(100)
-
-    
-    
 
 
 

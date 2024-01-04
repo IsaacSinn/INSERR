@@ -13,7 +13,7 @@ from EthernetServer import EthernetHandler
 from EthernetServer import TestEthernetHandler
 from USBCameraServer import USBCameraHandler, USBCameraDisplay
 import os
-import time 
+import time
 
 # allow pygame to not be in focus and still works
 os.environ["SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS"] = "1"
@@ -80,3 +80,11 @@ finally:
     #TODO: stuck at stopping ethernet client handler, blocking call socket.accept() 
     print("stopped all modules")
     sys.exit()
+
+
+
+# TODO:
+# - ip address constantly change, static ip?
+# - lidar check port before connecting
+# - launch file for rpi
+# - 

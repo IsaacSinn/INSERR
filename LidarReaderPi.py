@@ -7,7 +7,7 @@ import time
 from ModuleBase import Module
 
 
-PORT_NAME = '/dev/ttyUSB0'
+PORT_NAME = '/dev/ttyUSB1'
 
 class LidarReaderPi(Module):
     def __init__(self):

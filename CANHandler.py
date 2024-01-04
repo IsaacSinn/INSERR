@@ -58,17 +58,19 @@ class CANHandler(Module):
         if sys.platform == 'linux':
 
             self.bus = can.interface.Bus(bustype = "socketcan", channel = "can0", bitrate = self.baudrate)
-
+            #self.bus = can.ThreadSafeBus(interface="socketcan", channel = "can0", bitrate = self.baudrate)
         pub.subscribe(self.message_listener, "can.send")
     
 
     def message_listener(self, message):
+        self.lock.acquire()
         msg = can.Message(arbitration_id = message["address"], data = message["data"], is_extended_id = False)
 
-        self.lock.acquire()
-
+        #self.lock.acquire()
+        #print(msg)
         try:
             self.bus.send(msg, timeout=0.01)
+            #self.bus.send(msg)
         except Exception as e:
             print("Message not sent:", [e, msg])
         finally:

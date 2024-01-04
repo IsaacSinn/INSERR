@@ -66,5 +66,5 @@ class USBCamera(Module):
 
 
 if __name__ == "__main__":
-    USBCamera = USBCamera(0, 'MJPG', 1280, 720, 30)
+    USBCamera = USBCamera(0, 'MJPG', 640, 480, 30)
     USBCamera.start(60)
