@@ -44,3 +44,9 @@ class IMUReaderPi(Module):
                         str(sys)+",\t"+str(gyro)+",\t"+str(accel)+",\t"+str(mag)+ ")\t(" +  \
                         str(time.time()) +")\t(\n"
                         )
+
+if __name__ == "__main__":
+    imu = IMUReaderPi()
+    IMUReaderPi = IMUReaderPi()
+    IMUReaderPi.start(100)
+    
